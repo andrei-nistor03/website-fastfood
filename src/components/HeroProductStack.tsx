@@ -3,14 +3,15 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { Draggable } from "gsap/Draggable";
-
-gsap.registerPlugin(Draggable);
 
 /**
- * The hero product isn't alone anymore — a small bunched pile of the
- * favourites behind the bucket, stacked like they just landed there. Drag
- * (or click) any card to bring it to the front; the rest resettle behind it.
+ * A 4-product stack: one hero item big up front, two smaller items side by
+ * side just behind it, and a fourth item hidden completely behind the pile —
+ * it only becomes visible once a click shuffles it into one of the three
+ * visible spots. Click anywhere on the stack to cycle the next product to
+ * the front (this also happens on its own every few seconds). Hovering a
+ * product spreads the visible cards apart so the back ones read more
+ * clearly, and the whole pile drifts with a slow idle float.
  */
 
 type Item = { slug: string; alt: string };
@@ -18,59 +19,95 @@ type Item = { slug: string; alt: string };
 const ITEMS: Item[] = [
   { slug: "only-chicken-bucket", alt: "Bucket Utopia plin cu pui prăjit" },
   { slug: "clasic-burger", alt: "Burger Clasic Utopia" },
-  { slug: "famous-wings", alt: "Famous Wings Utopia" },
+  { slug: "gogoasa-biscoff", alt: "Gogoașă Biscoff Utopia" },
   { slug: "fries", alt: "Cartofi prăjiți Utopia" },
 ];
 
-// Front-to-back resting positions — a loose, slightly messy pile rather than
-// a tidy radial fan. All cards share the same base size; scale does the rest.
-const SLOTS = [
-  { x: 0, y: 0, rotate: -2, scale: 1 },
-  { x: 34, y: 26, rotate: 9, scale: 0.72 },
-  { x: -104, y: 58, rotate: -11, scale: 0.6 },
-  { x: 92, y: 92, rotate: 7, scale: 0.52 },
+// Product photos don't all fill their frame the same amount, so equal
+// GSAP scale still reads as different physical sizes — this trims the
+// worst offenders back down when they land in a bigger slot.
+const ITEM_SCALE: Record<string, number> = {
+  "only-chicken-bucket": 1,
+  "clasic-burger": 0.82,
+  fries: 1,
+};
+
+// Extra correction applied only when the item is the front/main product —
+// the donut reads noticeably bigger than the others at that size.
+const FRONT_ITEM_SCALE: Record<string, number> = {
+  "gogoasa-biscoff": 0.8,
+};
+
+// Resting positions by depth: 0 = big hero in front, 1/2 = smaller cards
+// side by side just behind it, 3 = fully hidden behind the pile.
+const REST_SLOTS = [
+  { x: 0, y: 16, rotate: -2, scale: 1.16 },
+  { x: -122, y: 52, rotate: -8, scale: 0.58 },
+  { x: 122, y: 52, rotate: 8, scale: 0.58 },
+  { x: 0, y: 34, rotate: 0, scale: 0.42 },
 ];
 
-const DRAG_THRESHOLD = 70;
+// Hover target for the three visible depths only — cards spread further
+// apart and the back pair grows a touch so they're easier to make out.
+// Depth 3 stays put and stays hidden; it never previews on hover.
+const HOVER_SLOTS = [
+  { x: 0, y: -4, rotate: -2, scale: 1.06 },
+  { x: -196, y: 30, rotate: -12, scale: 0.72 },
+  { x: 196, y: 30, rotate: 12, scale: 0.72 },
+];
+
+const AUTOPLAY_MS = 5000;
+
+function targetFor(depth: number, hovering: boolean, slug: string) {
+  const itemScale = (ITEM_SCALE[slug] ?? 1) * (depth === 0 ? FRONT_ITEM_SCALE[slug] ?? 1 : 1);
+  if (depth === 3) {
+    const s = REST_SLOTS[3];
+    return { x: s.x, y: s.y, rotation: s.rotate, scale: s.scale * itemScale, autoAlpha: 0, zIndex: 1 };
+  }
+  const s = hovering ? HOVER_SLOTS[depth] : REST_SLOTS[depth];
+  return { x: s.x, y: s.y, rotation: s.rotate, scale: s.scale * itemScale, autoAlpha: 1, zIndex: 4 - depth };
+}
 
 export default function HeroProductStack({ className = "" }: { className?: string }) {
   const [order, setOrder] = useState<number[]>([0, 1, 2, 3]);
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const first = useRef(true);
-  // A drag that crosses the threshold also fires a native click on release —
-  // this remembers *which element* was just dragged so only that element's
-  // next click gets swallowed, not a genuine click on a different card.
-  const suppressClickOn = useRef<HTMLDivElement | null>(null);
+  const hovering = useRef(false);
+  const hoverCount = useRef(0);
+  const autoplayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reducedMotion = useRef(false);
 
   const cycleFromFront = () => setOrder((o) => [...o.slice(1), o[0]]);
-  const bringToFront = (itemIndex: number) =>
-    setOrder((o) => (o[0] === itemIndex ? o : [itemIndex, ...o.filter((x) => x !== itemIndex)]));
+
+  const scheduleAutoplay = () => {
+    if (autoplayTimer.current) clearTimeout(autoplayTimer.current);
+    if (reducedMotion.current || hoverCount.current > 0) return;
+    autoplayTimer.current = setTimeout(cycleFromFront, AUTOPLAY_MS);
+  };
 
   // Position every card according to its current depth in `order` — on the
-  // first run this is an entrance (cards fly in and land), after that it's
-  // just a resettle following a drag or a click.
+  // first run this is an entrance (visible cards fly in and land, the
+  // hidden one just appears hidden), after that it's a resettle following
+  // a click. Also (re)arms the auto-advance timer for the new order.
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = reducedMotion.current;
 
     order.forEach((itemIndex, depth) => {
       const el = cardRefs.current[itemIndex];
       if (!el) return;
-      const slot = SLOTS[depth];
-      const rest = {
-        x: slot.x,
-        y: slot.y,
-        rotation: slot.rotate,
-        scale: slot.scale,
-        zIndex: SLOTS.length - depth,
-      };
+      const target = targetFor(depth, hovering.current, ITEMS[itemIndex].slug);
 
       if (first.current) {
-        gsap.set(el, rest);
-        if (!reduced) {
+        if (depth === 3) {
+          gsap.set(el, target);
+        } else if (!reduced) {
+          gsap.set(el, target);
           gsap.from(el, {
-            x: slot.x + (itemIndex % 2 === 0 ? -170 : 170),
-            y: slot.y + 130,
-            rotation: slot.rotate + (itemIndex % 2 === 0 ? -55 : 55),
+            x: target.x + (itemIndex % 2 === 0 ? -170 : 170),
+            y: target.y + 130,
+            rotation: target.rotation + (itemIndex % 2 === 0 ? -55 : 55),
             scale: 0.3,
             autoAlpha: 0,
             duration: 0.9,
@@ -78,75 +115,104 @@ export default function HeroProductStack({ className = "" }: { className?: strin
             ease: "back.out(1.6)",
           });
         } else {
-          gsap.set(el, { autoAlpha: 1 });
+          gsap.set(el, target);
         }
       } else {
-        gsap.to(el, { ...rest, duration: 0.55, ease: "power3.out", overwrite: true });
+        gsap.to(el, { ...target, duration: 0.55, ease: "power3.out", overwrite: true });
       }
     });
 
     first.current = false;
+    scheduleAutoplay();
+
+    return () => {
+      if (autoplayTimer.current) clearTimeout(autoplayTimer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order]);
 
-  // Draggable lives on whichever card is currently front, recreated each
-  // time that changes so it always tracks a live, correctly-positioned node.
+  // Slow, continuous idle float for the whole pile — independent of the
+  // per-card position tweens above, since it lives on the stage wrapper
+  // rather than the cards themselves.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const frontIndex = order[0];
-    const el = cardRefs.current[frontIndex];
+    const el = stageRef.current;
     if (!el) return;
 
-    const [inst] = Draggable.create(el, {
-      type: "x",
-      bounds: { minX: -260, maxX: 260 },
-      edgeResistance: 0.6,
-      onDragEnd() {
-        if (Math.abs(this.x) > DRAG_THRESHOLD) {
-          suppressClickOn.current = el;
-          cycleFromFront();
-        } else {
-          gsap.to(el, { x: SLOTS[0].x, duration: 0.4, ease: "power3.out" });
-        }
-      },
+    const tween = gsap.to(el, {
+      y: 16,
+      duration: 2.6,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
     });
 
     return () => {
-      inst.kill();
+      tween.kill();
     };
-  }, [order]);
+  }, []);
+
+  const applyHover = (isHovering: boolean) => {
+    hoverCount.current = Math.max(0, hoverCount.current + (isHovering ? 1 : -1));
+    const nowHovering = hoverCount.current > 0;
+    if (nowHovering === hovering.current) return;
+    hovering.current = nowHovering;
+
+    order.forEach((itemIndex, depth) => {
+      if (depth === 3) return;
+      const el = cardRefs.current[itemIndex];
+      if (!el) return;
+      gsap.to(el, {
+        ...targetFor(depth, nowHovering, ITEMS[itemIndex].slug),
+        duration: 0.45,
+        ease: "power3.out",
+        overwrite: true,
+      });
+    });
+
+    scheduleAutoplay();
+  };
+
+  const handleClick = () => {
+    cycleFromFront();
+  };
 
   return (
-    <div className={`relative mx-auto aspect-square w-[80%] max-w-[480px] md:w-full ${className}`}>
+    <div
+      ref={stageRef}
+      className={`relative mx-auto aspect-square w-[88%] max-w-[560px] md:w-full ${className}`}
+    >
       {ITEMS.map((item, i) => (
         <div
           key={item.slug}
           ref={(el) => {
             cardRefs.current[i] = el;
           }}
-          onClick={(e) => {
-            if (suppressClickOn.current === e.currentTarget) {
-              suppressClickOn.current = null;
-              return;
-            }
-            bringToFront(i);
-          }}
-          className={`u-hidden absolute inset-0 m-auto h-fit w-[72%] will-change-transform ${
-            order[0] === i ? "touch-none cursor-grab active:cursor-grabbing" : "cursor-pointer"
-          }`}
+          className="u-hidden absolute inset-0 m-auto h-fit w-[72%] will-change-transform"
         >
-          <div className="transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.05]">
-            <Image
-              src={`/produse/${item.slug}.webp`}
-              alt={item.alt}
-              width={880}
-              height={880}
-              priority={i === 0}
-              sizes="(max-width: 768px) 60vw, 32vw"
-              draggable={false}
-              className="pointer-events-none w-full drop-shadow-[0_28px_46px_rgba(0,0,0,0.32)]"
-            />
-          </div>
+          <Image
+            src={`/produse/${item.slug}.webp`}
+            alt={item.alt}
+            width={880}
+            height={880}
+            priority={i === 0}
+            sizes="(max-width: 768px) 60vw, 32vw"
+            draggable={false}
+            className="pointer-events-none w-full drop-shadow-[0_28px_46px_rgba(0,0,0,0.32)]"
+          />
+          {/* Hit region deliberately smaller than the rendered image — the
+              photos carry a lot of transparent padding, so hovering/clicking
+              only "counts" over the product's actual visual footprint. Always
+              mounted (never conditionally removed) so a click that shuffles
+              this card to the hidden depth can't unmount it out from under
+              an active hover and strand the hover-count. The hidden card's
+              region sits under the front card in z-order regardless. */}
+          <div
+            onClick={handleClick}
+            onMouseEnter={() => applyHover(true)}
+            onMouseLeave={() => applyHover(false)}
+            className="absolute inset-[22%] cursor-pointer"
+          />
         </div>
       ))}
     </div>

@@ -1,9 +1,22 @@
+"use client";
+
 import Image from "next/image";
+import { useRef, type SyntheticEvent } from "react";
 import Lockup from "./Lockup";
-import HeroScene from "./HeroScene";
+import HeroScene, { type HeroSceneHandle } from "./HeroScene";
 import HeroProductStack from "./HeroProductStack";
 
 export default function Hero() {
+  const sceneRef = useRef<HeroSceneHandle>(null);
+
+  // Fired on hover and keyboard focus alike — the crumbs should react to
+  // intent, not just a mouse.
+  const wakeSizzle = (e: SyntheticEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    sceneRef.current?.setSizzle(true, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  };
+  const restSizzle = () => sceneRef.current?.setSizzle(false);
+
   return (
     <section
       id="top"
@@ -20,9 +33,9 @@ export default function Hero() {
         aria-hidden
       />
 
-      <HeroScene className="pointer-events-none absolute inset-0 z-[1]" />
+      <HeroScene ref={sceneRef} className="pointer-events-none absolute inset-0 z-[1]" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-[1.05fr_1fr] md:gap-4 md:px-10">
+      <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-[1fr_1.15fr] md:gap-4 md:px-10">
         <div className="order-2 md:order-1">
           {/* p.13 — the lockup as drawn in the manual: red / black / yellow. */}
           <Lockup
@@ -35,17 +48,16 @@ export default function Hero() {
             ]}
           />
 
-          <p
-            data-hero="line"
-            className="u-hidden mt-7 max-w-[46ch] text-[clamp(1.05rem,2.2vw,1.35rem)] font-medium text-u-white md:mt-9"
+          <div
+            data-hero="cta"
+            className="u-hidden mt-8 flex flex-wrap items-center gap-3"
           >
-            Pui prăjit, făcut cum trebuie, în Arad și Timișoara. Porții oneste,
-            servit repede, fără poveste de fundal.
-          </p>
-
-          <div data-hero="cta" className="u-hidden mt-8 flex flex-wrap items-center gap-3">
             <a
               href="#meniu"
+              onMouseEnter={wakeSizzle}
+              onMouseLeave={restSizzle}
+              onFocus={wakeSizzle}
+              onBlur={restSizzle}
               className="u-band bg-u-white text-u-black text-[clamp(1.05rem,2.4vw,1.35rem)] transition-transform duration-200 hover:-rotate-2 hover:scale-[1.03]"
             >
               Vezi meniul
@@ -59,7 +71,10 @@ export default function Hero() {
           </div>
         </div>
 
-        <div data-hero="product" className="relative order-1 md:order-2">
+        <div
+          data-hero="product"
+          className="relative order-1 -translate-y-4 md:order-2 md:-translate-y-12"
+        >
           <HeroProductStack />
         </div>
       </div>

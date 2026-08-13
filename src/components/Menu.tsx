@@ -4,12 +4,14 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 import Lockup from "./Lockup";
+import MenuCrumbBurst, { type MenuCrumbBurstHandle } from "./MenuCrumbBurst";
 import { categories } from "@/data/menu";
 
 export default function Menu() {
   const [active, setActive] = useState(categories[0].id);
   const grid = useRef<HTMLUListElement>(null);
   const tablist = useRef<HTMLDivElement>(null);
+  const crumbBurst = useRef<MenuCrumbBurstHandle>(null);
   const first = useRef(true);
 
   const current = categories.find((c) => c.id === active) ?? categories[0];
@@ -62,12 +64,13 @@ export default function Menu() {
         {
           "--checker-a": "var(--color-u-ink)",
           "--checker-b": "var(--color-u-white)",
-          "--checker-size": "48px",
+          "--checker-size": "180px",
         } as CSSProperties
       }
       aria-labelledby="meniu-titlu"
     >
       <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10">
+        <MenuCrumbBurst ref={crumbBurst} className="z-[15]" />
         {/* A solid panel for the header content to sit on — the checkerboard
             is the section's floor, not something running text has to fight
             for legibility against. */}
@@ -81,7 +84,7 @@ export default function Menu() {
               lines={[
                 { text: "Cool people", tone: "yellow", tilt: -2 },
                 { text: "eat", tone: "red", tilt: 3 },
-                { text: "Fried chicken", tone: "black", tilt: -1 },
+                { text: "Fried chicken", tone: "black", tilt: -3 },
               ]}
             />
             <div className="flex items-end gap-5 md:pb-2">
@@ -90,14 +93,8 @@ export default function Menu() {
                 alt=""
                 width={260}
                 height={366}
-                className="hidden w-[86px] shrink-0 md:block lg:w-[104px]"
+                className="hidden w-[86px] shrink-0 md:block lg:w-[250px]"
               />
-              <p
-                id="meniu-titlu"
-                className="max-w-[34ch] text-[1.05rem] text-u-ink/80 md:text-right"
-              >
-                Tot ce se poate comanda. Dacă e în meniu, îl susținem.
-              </p>
             </div>
           </div>
 
@@ -118,7 +115,13 @@ export default function Menu() {
                   aria-selected={on}
                   aria-controls={`panou-${c.id}`}
                   id={`tab-${c.id}`}
-                  onClick={() => setActive(c.id)}
+                  onClick={(e) => {
+                    if (c.id !== active) {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      crumbBurst.current?.burst(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                    }
+                    setActive(c.id);
+                  }}
                   className={
                     on
                       ? "u-band bg-u-red text-u-white text-[clamp(1.05rem,2.2vw,1.35rem)] -rotate-2"
