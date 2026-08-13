@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   UTOPIA FRIED CHICKEN — design tokens
+   Every value here comes from the brand manual (UTOPIAFC_ghid, v25052026).
+   Colours: p.7 "CULORI". Type ratio: p.12 "FONTURI" (x 1,62).
+   ------------------------------------------------------------------ */
+
+@theme {
+  /* p.7 — the four base colours, plus the recommended off-white */
+  --color-u-red: #e10019;
+  --color-u-yellow: #ffc400;
+  --color-u-black: #000000;
+  --color-u-ink: #221e1f; /* rich black, for large dark surfaces */
+  --color-u-white: #ffffff;
+  --color-u-cream: #faf9f6; /* off-white — never on the logo */
+
+  --font-display: "Figtree Variable", "Azo Sans", system-ui, sans-serif;
+  --font-body: "Zilla Slab", Georgia, serif;
+
+  /* p.12 — "Progresia ideală între nivelurile titlurilor este x 1,62" */
+  --text-step-0: 1rem;
+  --text-step-1: 1.62rem;
+  --text-step-2: 2.624rem;
+  --text-step-3: 4.251rem;
+  --text-step-4: 6.886rem;
+
+  --ease-slam: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background: var(--color-u-cream);
+    color: var(--color-u-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-step-0);
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  /* p.12 — headings are the display face, black weight, tight and set solid */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 0.86;
+    letter-spacing: -0.022em;
+    text-transform: uppercase;
+  }
+
+  ::selection {
+    background: var(--color-u-yellow);
+    color: var(--color-u-black);
+  }
+
+  /* Quality floor: a focus ring that survives on red, yellow and black */
+  :focus-visible {
+    outline: 3px solid var(--color-u-yellow);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .on-yellow :focus-visible {
+    outline-color: var(--color-u-black);
+  }
+}
+
+@utility u-eyebrow {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+}
+
+/* p.15 — "BENZILE COLORATE": a solid band sitting under a short phrase.
+   Width is proportional to the text above it; the text is set optically,
+   not strictly, on the vertical. Tilt lives between 0 and 6 degrees. */
+@utility u-band {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  padding: 0.2em 0.36em 0.26em;
+  white-space: nowrap;
+}
+
+/* p.15 — "BLOB-URILE GALBENE": fragments of yellow ellipses, cropped by the
+   edge of the frame. Never whole, never centred, always behind everything. */
+@utility u-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-u-yellow);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The checkerboard the restaurant itself leans on — floors, packaging trim,
+   the works. Two custom properties (`--checker-a` / `--checker-b`, set
+   inline per usage) and a size, so one utility covers every spot it shows
+   up. Defaults to ink squares on whatever sits underneath. */
+@utility u-checker {
+  background-image: conic-gradient(
+    var(--checker-a, var(--color-u-ink)) 90deg,
+    var(--checker-b, transparent) 90deg 180deg,
+    var(--checker-a, var(--color-u-ink)) 180deg 270deg,
+    var(--checker-b, transparent) 270deg
+  );
+  background-size: var(--checker-size, 24px) var(--checker-size, 24px);
+}
+
+@keyframes u-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Elements the entrance timeline will reveal — hidden up front so there is no
+   flash of un-animated content before GSAP takes over. The `.js-motion` gate is
+   only set when scripting is on AND the visitor has not asked for reduced
+   motion, so nothing can ever be left invisible. */
+.js-motion .u-hidden {
+  visibility: hidden;
+}
