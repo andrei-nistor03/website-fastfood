@@ -14,11 +14,22 @@ export function Model(props) {
   const { nodes, materials } = useGLTF("/models/krispy_fried_chicken.glb");
   return (
     <group {...props} dispose={null}>
+      {/* The source material is unlit (MeshBasicMaterial), which has no
+          shader path for shadow reception — swapped for a lit material
+          carrying the same diffuse map so pieces pick up shadows cast by
+          their neighbors instead of just casting onto the (lit) bucket. */}
       <mesh
         geometry={nodes.Object_2.geometry}
-        material={materials["Material.001"]}
         rotation={[1.77, -0.501, 0.097]}
-      />
+        castShadow
+        receiveShadow
+      >
+        <meshStandardMaterial
+          map={materials["Material.001"].map}
+          roughness={1}
+          metalness={0}
+        />
+      </mesh>
     </group>
   );
 }

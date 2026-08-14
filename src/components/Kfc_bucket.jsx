@@ -17,10 +17,10 @@ export function Model(props) {
       <group rotation={[-1.906, -0.28, -0.025]} scale={0.007}>
         <group rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <group position={[0, 1032.892, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={100000}>
-            <mesh geometry={nodes.baza005_Material007_0.geometry} material={materials['Material.007']} />
-            <mesh geometry={nodes.baza005_Material008_0.geometry} material={materials['Material.008']} />
+            <mesh geometry={nodes.baza005_Material007_0.geometry} material={materials['Material.007']} receiveShadow />
+            <mesh geometry={nodes.baza005_Material008_0.geometry} material={materials['Material.008']} receiveShadow />
           </group>
-          <mesh geometry={nodes.stamp001_Material005_0.geometry} material={materials['Material.005']} position={[16.529, 1811.255, 834.954]} rotation={[-Math.PI / 2, 0, 0]} scale={76165.422} />
+          <mesh geometry={nodes.stamp001_Material005_0.geometry} material={materials['Material.005']} position={[16.529, 1811.255, 834.954]} rotation={[-Math.PI / 2, 0, 0]} scale={76165.422} receiveShadow />
         </group>
       </group>
     </group>

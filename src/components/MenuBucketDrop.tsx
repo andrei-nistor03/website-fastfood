@@ -246,6 +246,7 @@ export default function MenuBucketDrop({
       aria-hidden="true"
     >
       <Canvas
+        shadows="soft"
         camera={{ position: [0, 0.5, 6], fov: 32 }}
         gl={{ alpha: true, antialias: true }}
         dpr={[1, 2]}
@@ -255,6 +256,16 @@ export default function MenuBucketDrop({
           position={[3, 5, 6]}
           intensity={2.2}
           color={0xfff2d0}
+          castShadow
+          shadow-mapSize={[1024, 1024]}
+          shadow-camera-left={-1.5}
+          shadow-camera-right={1.5}
+          shadow-camera-top={1.5}
+          shadow-camera-bottom={-1.5}
+          shadow-camera-near={6}
+          shadow-camera-far={11}
+          shadow-bias={-0.0003}
+          shadow-normalBias={0.015}
         />
         <directionalLight
           position={[-4, -2, 3]}
