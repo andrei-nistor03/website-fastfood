@@ -56,19 +56,38 @@ const HOVER_SLOTS = [
   { x: 196, y: 30, rotate: 12, scale: 0.72 },
 ];
 
-const AUTOPLAY_MS = 5000;
+const AUTOPLAY_MS = 3000;
 
 function targetFor(depth: number, hovering: boolean, slug: string) {
-  const itemScale = (ITEM_SCALE[slug] ?? 1) * (depth === 0 ? FRONT_ITEM_SCALE[slug] ?? 1 : 1);
+  const itemScale =
+    (ITEM_SCALE[slug] ?? 1) * (depth === 0 ? (FRONT_ITEM_SCALE[slug] ?? 1) : 1);
   if (depth === 3) {
     const s = REST_SLOTS[3];
-    return { x: s.x, y: s.y, rotation: s.rotate, scale: s.scale * itemScale, autoAlpha: 0, zIndex: 1 };
+    return {
+      x: s.x,
+      y: s.y,
+      rotation: s.rotate,
+      scale: s.scale * itemScale,
+      autoAlpha: 0,
+      zIndex: 1,
+    };
   }
   const s = hovering ? HOVER_SLOTS[depth] : REST_SLOTS[depth];
-  return { x: s.x, y: s.y, rotation: s.rotate, scale: s.scale * itemScale, autoAlpha: 1, zIndex: 4 - depth };
+  return {
+    x: s.x,
+    y: s.y,
+    rotation: s.rotate,
+    scale: s.scale * itemScale,
+    autoAlpha: 1,
+    zIndex: 4 - depth,
+  };
 }
 
-export default function HeroProductStack({ className = "" }: { className?: string }) {
+export default function HeroProductStack({
+  className = "",
+}: {
+  className?: string;
+}) {
   const [order, setOrder] = useState<number[]>([0, 1, 2, 3]);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -91,7 +110,9 @@ export default function HeroProductStack({ className = "" }: { className?: strin
   // hidden one just appears hidden), after that it's a resettle following
   // a click. Also (re)arms the auto-advance timer for the new order.
   useEffect(() => {
-    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    reducedMotion.current = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     const reduced = reducedMotion.current;
 
     order.forEach((itemIndex, depth) => {
@@ -118,7 +139,12 @@ export default function HeroProductStack({ className = "" }: { className?: strin
           gsap.set(el, target);
         }
       } else {
-        gsap.to(el, { ...target, duration: 0.55, ease: "power3.out", overwrite: true });
+        gsap.to(el, {
+          ...target,
+          duration: 0.55,
+          ease: "power3.out",
+          overwrite: true,
+        });
       }
     });
 
@@ -153,7 +179,10 @@ export default function HeroProductStack({ className = "" }: { className?: strin
   }, []);
 
   const applyHover = (isHovering: boolean) => {
-    hoverCount.current = Math.max(0, hoverCount.current + (isHovering ? 1 : -1));
+    hoverCount.current = Math.max(
+      0,
+      hoverCount.current + (isHovering ? 1 : -1),
+    );
     const nowHovering = hoverCount.current > 0;
     if (nowHovering === hovering.current) return;
     hovering.current = nowHovering;

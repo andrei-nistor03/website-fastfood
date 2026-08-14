@@ -11,7 +11,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export function Model(props) {
-  const { nodes, materials } = useGLTF('/chicken_tender.glb')
+  const { nodes, materials } = useGLTF('/models/chicken_tender.glb')
   return (
     <group {...props} dispose={null}>
       <group scale={0.01}>
@@ -21,4 +21,4 @@ export function Model(props) {
   )
 }
 
-useGLTF.preload('/chicken_tender.glb')
+useGLTF.preload('/models/chicken_tender.glb')
