@@ -72,11 +72,11 @@ function BucketRig({
         }
         trigger = ScrollTrigger.create({
           trigger: pinTarget,
-          // "top top" so the pinned section is flush with the viewport the
-          // instant it locks — anything short of that leaves the content
-          // above it free to keep scrolling away while the section holds,
-          // opening a gap that grows for the whole scrub range.
-          start: "top top",
+          // Pins before the section reaches the top of the viewport so the
+          // drop kicks off sooner. Content above keeps scrolling until this
+          // fires, so pushing this further down (e.g. "top 50%") widens the
+          // gap that opens above the pinned section for the whole scrub range.
+          start: "top 10%",
           end: "+=600",
           pin: true,
           scrub: 1,
