@@ -146,3 +146,37 @@
 .js-motion .u-hidden {
   visibility: hidden;
 }
+
+/* The full-page loader (see Loader.tsx) is only ever shown once a script has
+   confirmed it can run — and therefore can also clear it again later. Without
+   `.js-loading` the overlay stays display:none, so a visitor with scripting
+   off just sees the static page, same as everything else `.js-motion` gates. */
+#site-loader {
+  display: none;
+}
+.js-loading #site-loader {
+  display: flex;
+}
+
+/* Set/cleared by Loader.tsx directly on <html> — kept off `body` since
+   Header.tsx also drives `body.style.overflow` for the mobile nav and the
+   two would otherwise fight over the same property. */
+html.u-loading-lock {
+  overflow: hidden;
+}
+
+@keyframes u-loader-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.9;
+  }
+}
+
+.u-loader-pulse {
+  animation: u-loader-pulse 1.8s ease-in-out infinite;
+}

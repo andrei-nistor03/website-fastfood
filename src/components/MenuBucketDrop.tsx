@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Model as KfcBucket } from "./Kfc_bucket";
-import { Model as ChickenTender } from "./Chicken_tender";
+import { Model as ChickenTender } from "./Krispy_fried_chicken";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -24,7 +24,7 @@ const MODEL_OFFSET: [number, number, number] = [0.4113, -1.3508, 0.4705];
 // The tender model's own long axis measures ~1 world unit at scale 1 — this
 // brings a piece down to roughly a third of the bucket's width so six of
 // them can land inside it without dwarfing it.
-const TENDER_SCALE = 1;
+const TENDER_SCALE = 2;
 
 // Off-frame starting height for every tender, matching the bucket's own
 // pre-drop height so neither is visible before its fall begins.
@@ -50,12 +50,12 @@ type TenderRestPose = {
 // variety so the pieces don't look identical. All six are easy to nudge
 // individually to test different landing spreads.
 const TENDER_RESTS: TenderRestPose[] = [
-  { x: -0.72, y: 0.4, z: -0.04, rx: 0.6, ry: 0.9, rz: 0.3 },
-  { x: 0.4, y: 0.6, z: 0.34, rx: -0.2, ry: -0.8, rz: 0.25 },
-  { x: -0.6, y: 0.5, z: -0.46, rx: 0.15, ry: 2.1, rz: 0.1 },
-  { x: -0.2, y: 0.4, z: -0.02, rx: -0.3, ry: -1, rz: 0.2 },
-  { x: 0.26, y: 0.6, z: -0.04, rx: 0.6, ry: 0.9, rz: 0.3 },
-  { x: -0.02, y: 0.5, z: 0.4, rx: -0.7, ry: 0.7, rz: 0.2 },
+  { x: -0.6, y: 0.6, z: -0.04, rx: 0, ry: 0, rz: 3 },
+  { x: 0.38, y: 0.6, z: 0.34, rx: 0, ry: 0, rz: 2 },
+  { x: -0.5, y: 0.5, z: -0.46, rx: 0.1, ry: 0.4, rz: 2.5 },
+  { x: 0.26, y: 0.7, z: -0.02, rx: -0.3, ry: -1, rz: 2.5 },
+  { x: -0.26, y: 0.65, z: -0.04, rx: 0.6, ry: 0.9, rz: 2.5 },
+  { x: -0.02, y: 0.75, z: 0.2, rx: -0.3, ry: 0.6, rz: 2.5 },
 ];
 
 // How far into the bucket's own tl (in the same seconds used by its
@@ -129,8 +129,8 @@ function BucketRig({
         .to(group.rotation, { x: 0.4, duration: 0.4, ease: "power2.out" }, "<")
         .to(group.position, { y: 0, duration: 0.28, ease: "power2.in" })
         .to(group.rotation, { x: 0.6, duration: 0.28, ease: "power2.in" }, "<")
-        .to(group.position, { y: 0.2, duration: 0.24, ease: "power2.out" })
-        .to(group.position, { y: 0, duration: 0.2, ease: "power2.in" });
+        .to(group.position, { y: 0, duration: 0.28, ease: "power2.in" })
+        .to(group.position, { y: 0.2, duration: 0.24, ease: "power2.out" });
 
       // Tenders rain in on the same tl, starting mid-bounce so they land
       // just after the bucket settles. Each is a sibling of `group` (not a

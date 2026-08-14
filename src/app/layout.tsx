@@ -6,6 +6,7 @@ import "@fontsource/zilla-slab/500.css";
 import "@fontsource/zilla-slab/700.css";
 import "@fontsource/zilla-slab/700-italic.css";
 import "./globals.css";
+import Loader from "@/components/Loader";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utopiafriedchicken.ro"),
@@ -29,20 +30,26 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ro">
+    <html lang="ro" suppressHydrationWarning>
       <head>
         {/* Opt in to the entrance animations only when scripting is available
             and the visitor has not asked for reduced motion. Without this class
-            nothing is ever hidden, so the page reads either way. */}
+            nothing is ever hidden, so the page reads either way. The loader
+            gate is unconditional — it doesn't depend on motion preference,
+            only on there being a script around to ever clear it again. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
+              "document.documentElement.classList.add('js-loading');" +
               "if(!matchMedia('(prefers-reduced-motion: reduce)').matches)" +
               "document.documentElement.classList.add('js-motion')",
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <Loader />
+        {children}
+      </body>
     </html>
   );
 }
