@@ -13,7 +13,11 @@ export default function Hero() {
   // intent, not just a mouse.
   const wakeSizzle = (e: SyntheticEvent<HTMLAnchorElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    sceneRef.current?.setSizzle(true, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    sceneRef.current?.setSizzle(
+      true,
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2,
+    );
   };
   const restSizzle = () => sceneRef.current?.setSizzle(false);
 
@@ -33,7 +37,10 @@ export default function Hero() {
         aria-hidden
       />
 
-      <HeroScene ref={sceneRef} className="pointer-events-none absolute inset-0 z-[1]" />
+      <HeroScene
+        ref={sceneRef}
+        className="pointer-events-none absolute inset-0 z-[1]"
+      />
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-[1fr_1.15fr] md:gap-4 md:px-10">
         <div className="order-2 md:order-1">
@@ -88,17 +95,8 @@ export default function Hero() {
         width={640}
         height={800}
         priority
-        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] z-[5] w-[34vw] max-w-[250px] origin-bottom md:right-[40%] md:w-[15vw]"
+        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] w-[34vw] max-w-[250px] origin-bottom md:right-[50%] md:w-[15vw] z-100"
       />
-
-      <a
-        href="#meniu"
-        aria-label="Sari la meniu"
-        className="u-eyebrow absolute bottom-5 right-5 z-10 hidden items-center gap-2 text-u-white/80 transition-colors hover:text-u-yellow md:flex"
-      >
-        Derulează
-        <span className="block h-6 w-[2px] animate-pulse bg-current" />
-      </a>
     </section>
   );
 }

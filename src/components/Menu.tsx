@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 import Lockup from "./Lockup";
+import MenuBucketDrop from "./MenuBucketDrop";
 import MenuCrumbBurst, { type MenuCrumbBurstHandle } from "./MenuCrumbBurst";
 import { categories } from "@/data/menu";
 
@@ -11,6 +12,8 @@ export default function Menu() {
   const [active, setActive] = useState(categories[0].id);
   const grid = useRef<HTMLUListElement>(null);
   const tablist = useRef<HTMLDivElement>(null);
+  const headerRow = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const crumbBurst = useRef<MenuCrumbBurstHandle>(null);
   const first = useRef(true);
 
@@ -58,8 +61,9 @@ export default function Menu() {
 
   return (
     <section
+      ref={sectionRef}
       id="meniu"
-      className="u-checker relative overflow-hidden py-20 md:py-28"
+      className="u-checker relative overflow-hidden py-10 md:py-12"
       style={
         {
           "--checker-a": "var(--color-u-ink)",
@@ -71,31 +75,23 @@ export default function Menu() {
     >
       <div className="relative z-10 mx-auto max-w-[1400px] px-5 md:px-10">
         <MenuCrumbBurst ref={crumbBurst} className="z-[15]" />
-        {/* A solid panel for the header content to sit on — the checkerboard
-            is the section's floor, not something running text has to fight
-            for legibility against. */}
         <div className="border-[3px] border-u-ink bg-u-cream px-5 py-7 md:px-9 md:py-9">
           <p className="u-eyebrow mb-5 text-u-red">Meniul</p>
 
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div
+            ref={headerRow}
+            className="relative flex flex-col gap-8 md:flex-row md:items-start md:justify-between"
+          >
             <Lockup
               as="h2"
-              size="lg"
+              size="md"
               lines={[
                 { text: "Cool people", tone: "yellow", tilt: -2 },
                 { text: "eat", tone: "red", tilt: 3 },
                 { text: "Fried chicken", tone: "black", tilt: -3 },
               ]}
             />
-            <div className="flex items-end gap-5 md:pb-2">
-              <Image
-                src="/brand/m-heart.webp"
-                alt=""
-                width={260}
-                height={366}
-                className="hidden w-[86px] shrink-0 md:block lg:w-[250px]"
-              />
-            </div>
+            <MenuBucketDrop pinTargetRef={sectionRef} />
           </div>
 
           {/* Tabs, built from the same band recipe as everything else. */}
@@ -103,7 +99,7 @@ export default function Menu() {
             ref={tablist}
             role="tablist"
             aria-label="Categorii din meniu"
-            className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-b-[3px] border-u-ink/15 pb-5"
+            className="relative z-10 mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-b-[3px] border-u-ink/15 pb-5 md:mt-16"
           >
             {categories.map((c) => {
               const on = c.id === active;
@@ -118,14 +114,17 @@ export default function Menu() {
                   onClick={(e) => {
                     if (c.id !== active) {
                       const rect = e.currentTarget.getBoundingClientRect();
-                      crumbBurst.current?.burst(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                      crumbBurst.current?.burst(
+                        rect.left + rect.width / 2,
+                        rect.top + rect.height / 2,
+                      );
                     }
                     setActive(c.id);
                   }}
                   className={
                     on
                       ? "u-band bg-u-red text-u-white text-[clamp(1.05rem,2.2vw,1.35rem)] -rotate-2"
-                      : "u-band bg-transparent text-[clamp(1.05rem,2.2vw,1.35rem)] text-u-ink/45 transition-[color,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-u-ink"
+                      : "u-band bg-transparent text-[clamp(1.05rem,2.2vw,1.35rem)] text-u-ink/45 transition-[color,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-u-ink cursor-pointer"
                   }
                 >
                   {c.label}

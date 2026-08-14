@@ -39,12 +39,6 @@ export const categories: Category[] = [
     label: "Burgeri",
     items: [
       {
-        slug: "clasic-burger",
-        name: "Clasic",
-        desc: "Piept de pui, pane crocant, cheddar, murături, maioneză cu usturoi. În chiflă.",
-        tag: "Cel mai comandat",
-      },
-      {
         slug: "spicy-burger",
         name: "Spicy",
         desc: "Piept de pui în pane picant, cheddar, murături, sos alb. În chiflă.",
@@ -116,7 +110,6 @@ export const categories: Category[] = [
   {
     id: "buckets",
     label: "Buckets",
-    note: "Bucket-urile se împart. Sau nu.",
     items: [
       {
         slug: "crispy-bucket",
