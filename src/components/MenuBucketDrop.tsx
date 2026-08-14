@@ -20,7 +20,11 @@ const BASE_SCALE = 11;
 // otherwise swing it off-frame — this re-centers it before any animation.
 const MODEL_OFFSET: [number, number, number] = [0.4113, -1.3508, 0.4705];
 
-function BucketRig({ pinTargetRef }: { pinTargetRef?: RefObject<HTMLElement | null> }) {
+function BucketRig({
+  pinTargetRef,
+}: {
+  pinTargetRef?: RefObject<HTMLElement | null>;
+}) {
   const groupRef = useRef<THREE.Group>(null);
 
   useGSAP(
@@ -28,7 +32,9 @@ function BucketRig({ pinTargetRef }: { pinTargetRef?: RefObject<HTMLElement | nu
       const group = groupRef.current;
       if (!group) return;
 
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
       if (reduced) {
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, -0.04);
@@ -36,17 +42,21 @@ function BucketRig({ pinTargetRef }: { pinTargetRef?: RefObject<HTMLElement | nu
       }
 
       group.position.set(0, 3.6, 0);
-      group.rotation.set(-0.55, 0.32, -0.38);
+      group.rotation.set(-0.55, 0.7, -0.38);
 
       // A fall + two diminishing bounces, keyed on position/rotation only —
       // no squash-and-stretch, the shape stays intact through the whole hit.
       const tl = gsap.timeline({ paused: true });
       tl.to(group.position, { y: 0, duration: 0.85, ease: "power2.in" })
-        .to(group.rotation, { x: 0, y: 0, z: -0.04, duration: 0.85, ease: "power2.in" }, "<")
+        .to(
+          group.rotation,
+          { x: 0, y: 0, z: -0.04, duration: 0.85, ease: "power2.in" },
+          "<",
+        )
         .to(group.position, { y: 0.55, duration: 0.4, ease: "power2.out" })
-        .to(group.rotation, { x: 0.14, duration: 0.4, ease: "power2.out" }, "<")
+        .to(group.rotation, { x: 0.4, duration: 0.4, ease: "power2.out" }, "<")
         .to(group.position, { y: 0, duration: 0.28, ease: "power2.in" })
-        .to(group.rotation, { x: 0, duration: 0.28, ease: "power2.in" }, "<")
+        .to(group.rotation, { x: 0.6, duration: 0.28, ease: "power2.in" }, "<")
         .to(group.position, { y: 0.2, duration: 0.24, ease: "power2.out" })
         .to(group.position, { y: 0, duration: 0.2, ease: "power2.in" });
 
@@ -113,8 +123,16 @@ export default function MenuBucketDrop({
         dpr={[1, 2]}
       >
         <ambientLight intensity={1.5} />
-        <directionalLight position={[3, 5, 6]} intensity={2.2} color={0xfff2d0} />
-        <directionalLight position={[-4, -2, 3]} intensity={0.5} color={0xffffff} />
+        <directionalLight
+          position={[3, 5, 6]}
+          intensity={2.2}
+          color={0xfff2d0}
+        />
+        <directionalLight
+          position={[-4, -2, 3]}
+          intensity={0.5}
+          color={0xffffff}
+        />
         <BucketRig pinTargetRef={pinTargetRef} />
       </Canvas>
     </div>
