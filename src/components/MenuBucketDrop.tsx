@@ -189,6 +189,7 @@ function BucketRig({
           return;
         }
         trigger = ScrollTrigger.create({
+          id: "bucket-drop",
           trigger: pinTarget,
           // Pins before the section reaches the top of the viewport so the
           // drop kicks off sooner. Content above keeps scrolling until this

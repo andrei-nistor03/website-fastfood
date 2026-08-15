@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
+import { scrollToSection } from "@/lib/scrollToSection";
 
 const NAV = [
   { href: "#meniu", label: "Meniu" },
@@ -39,6 +40,10 @@ export default function Header() {
             clear space, and the two should appear together wherever possible. */}
         <a
           href="#top"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToSection("#top");
+          }}
           className="relative flex shrink-0 items-end gap-0"
           aria-label="Utopia Fried Chicken — începutul paginii"
         >
@@ -65,6 +70,10 @@ export default function Header() {
             <a
               key={n.href}
               href={n.href}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection(n.href);
+              }}
               className="u-eyebrow text-u-white transition-colors hover:text-u-yellow"
             >
               {n.label}
@@ -72,6 +81,10 @@ export default function Header() {
           ))}
           <a
             href="#locatii"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection("#locatii");
+            }}
             className="u-band bg-u-yellow text-u-black text-[0.95rem] transition-transform duration-200 hover:-rotate-2"
           >
             Vino la noi
@@ -114,7 +127,11 @@ export default function Header() {
             <li key={n.href}>
               <a
                 href={n.href}
-                onClick={() => setOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpen(false);
+                  scrollToSection(n.href);
+                }}
                 className="u-band bg-u-white text-u-black text-[1.62rem]"
               >
                 {n.label}
@@ -124,7 +141,11 @@ export default function Header() {
           <li>
             <a
               href="#locatii"
-              onClick={() => setOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                setOpen(false);
+                scrollToSection("#locatii");
+              }}
               className="u-band bg-u-yellow text-u-black text-[1.62rem]"
             >
               Vino la noi

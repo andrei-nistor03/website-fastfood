@@ -1,26 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type SyntheticEvent } from "react";
 import Lockup from "./Lockup";
-import HeroScene, { type HeroSceneHandle } from "./HeroScene";
+import HeroScene from "./HeroScene";
 import HeroProductStack from "./HeroProductStack";
+import { scrollToSection } from "@/lib/scrollToSection";
 
 export default function Hero() {
-  const sceneRef = useRef<HeroSceneHandle>(null);
-
-  // Fired on hover and keyboard focus alike — the crumbs should react to
-  // intent, not just a mouse.
-  const wakeSizzle = (e: SyntheticEvent<HTMLAnchorElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    sceneRef.current?.setSizzle(
-      true,
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2,
-    );
-  };
-  const restSizzle = () => sceneRef.current?.setSizzle(false);
-
   return (
     <section
       id="top"
@@ -37,10 +23,7 @@ export default function Hero() {
         aria-hidden
       />
 
-      <HeroScene
-        ref={sceneRef}
-        className="pointer-events-none absolute inset-0 z-[1]"
-      />
+      <HeroScene className="pointer-events-none absolute inset-0 z-[1]" />
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-[1fr_1.15fr] md:gap-4 md:px-10">
         <div className="order-2 md:order-1">
@@ -61,16 +44,20 @@ export default function Hero() {
           >
             <a
               href="#meniu"
-              onMouseEnter={wakeSizzle}
-              onMouseLeave={restSizzle}
-              onFocus={wakeSizzle}
-              onBlur={restSizzle}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection("#meniu");
+              }}
               className="u-band bg-u-white text-u-black text-[clamp(1.05rem,2.4vw,1.35rem)] transition-transform duration-200 hover:-rotate-2 hover:scale-[1.03]"
             >
               Vezi meniul
             </a>
             <a
               href="#locatii"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection("#locatii");
+              }}
               className="u-band border-[3px] border-u-white bg-transparent text-u-white text-[clamp(1.05rem,2.4vw,1.35rem)] transition-transform duration-200 hover:rotate-2 hover:scale-[1.03]"
             >
               Unde ne găsești

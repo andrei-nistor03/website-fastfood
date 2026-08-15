@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /**
@@ -83,27 +83,8 @@ function createFlakeGroup(
   return { geometry, material, mesh, states };
 }
 
-export type HeroSceneHandle = {
-  /** clientX/clientY are only needed when turning the sizzle on. */
-  setSizzle: (active: boolean, clientX?: number, clientY?: number) => void;
-};
-
-const HeroScene = forwardRef<HeroSceneHandle, { className?: string }>(function HeroScene(
-  { className = "" },
-  ref,
-) {
+export default function HeroScene({ className = "" }: { className?: string }) {
   const host = useRef<HTMLDivElement>(null);
-  const sizzleRef = useRef({ active: false, x: 0, y: 0 });
-
-  useImperativeHandle(ref, () => ({
-    setSizzle: (active, clientX, clientY) => {
-      sizzleRef.current.active = active;
-      if (active && clientX !== undefined && clientY !== undefined) {
-        sizzleRef.current.x = (clientX / window.innerWidth - 0.5) * 2;
-        sizzleRef.current.y = (clientY / window.innerHeight - 0.5) * 2;
-      }
-    },
-  }));
 
   useEffect(() => {
     const el = host.current;
@@ -181,14 +162,6 @@ const HeroScene = forwardRef<HeroSceneHandle, { className?: string }>(function H
     const PUSH_RADIUS = 7.5;
     const PUSH_STRENGTH = 2.6;
 
-    // A brief, localized boost reported by the CTA on hover/focus — same
-    // push mechanic as the pointer above, just stronger, centered on the
-    // button instead of the cursor, and eased in/out rather than snapping.
-    const SIZZLE_RADIUS = 4.5;
-    const SIZZLE_STRENGTH = 4.5;
-    let sizzleAmount = 0;
-    const sizzlePos = { x: 0, y: 0 };
-
     let raf = 0;
     const tick = () => {
       raf = requestAnimationFrame(tick);
@@ -201,15 +174,6 @@ const HeroScene = forwardRef<HeroSceneHandle, { className?: string }>(function H
       pointer.y += (target.y - pointer.y) * 0.09;
       pointerWorld.x = pointer.x * (SPREAD.x / 2);
       pointerWorld.y = -pointer.y * (SPREAD.y / 2);
-
-      const sz = sizzleRef.current;
-      sizzleAmount += ((sz.active ? 1 : 0) - sizzleAmount) * 0.08;
-      if (sz.active) {
-        sizzlePos.x += (sz.x - sizzlePos.x) * 0.2;
-        sizzlePos.y += (sz.y - sizzlePos.y) * 0.2;
-      }
-      const sizzleWorldX = sizzlePos.x * (SPREAD.x / 2);
-      const sizzleWorldY = -sizzlePos.y * (SPREAD.y / 2);
 
       for (const group of groups) {
         const { states, mesh } = group;
@@ -237,21 +201,6 @@ const HeroScene = forwardRef<HeroSceneHandle, { className?: string }>(function H
             const force = falloff * falloff * PUSH_STRENGTH;
             pushX = (dx / dist) * force;
             pushY = (dy / dist) * force;
-          }
-
-          if (sizzleAmount > 0.01) {
-            const dxS = s.pos.x - sizzleWorldX;
-            const dyS = s.pos.y - sizzleWorldY;
-            const distSqS = dxS * dxS + dyS * dyS;
-            if (distSqS < SIZZLE_RADIUS * SIZZLE_RADIUS) {
-              const distS = Math.sqrt(distSqS) || 0.001;
-              const falloffS = 1 - distS / SIZZLE_RADIUS;
-              const forceS = falloffS * falloffS * SIZZLE_STRENGTH * sizzleAmount;
-              pushX += (dxS / distS) * forceS;
-              pushY += (dyS / distS) * forceS;
-              s.rot.x += forceS * 0.5;
-              s.rot.y += forceS * 0.5;
-            }
           }
 
           dummy.position.set(s.pos.x + pushX, s.pos.y + pushY, s.pos.z);
@@ -285,6 +234,4 @@ const HeroScene = forwardRef<HeroSceneHandle, { className?: string }>(function H
   }, []);
 
   return <div ref={host} aria-hidden className={className} />;
-});
-
-export default HeroScene;
+}
