@@ -200,6 +200,19 @@ function BucketRig({
           scrub: 1,
           animation: tl,
         });
+        // This trigger is created late (after the model's own async setup),
+        // well after Motion.tsx has already created the triggers for every
+        // section below (Locations, About, ...). Those measured their start
+        // positions against a shorter, pre-pin document, so they're left
+        // stale once this pin inserts its spacer height. A plain refresh()
+        // re-measures geometry but does NOT recompute how much of that
+        // spacer earlier triggers should account for — GSAP only applies
+        // that correction to triggers in its internally sorted (by scroll
+        // position) list, and this pin was created and appended after that
+        // list was built. sort() rebuilds it in the pin's true document
+        // position before refresh() recalculates everyone downstream.
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
       };
       arm();
 

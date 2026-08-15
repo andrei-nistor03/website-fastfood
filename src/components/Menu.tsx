@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lockup from "./Lockup";
 import MenuBucketDrop from "./MenuBucketDrop";
 import MenuCrumbBurst, { type MenuCrumbBurstHandle } from "./MenuCrumbBurst";
@@ -27,7 +28,19 @@ export default function Menu() {
       first.current = false;
       return;
     }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // MenuBucketDrop pins this whole section, and its pin-spacer height is
+    // only measured once against whichever category was active when the
+    // pin was created. Switching category changes the grid's row count (and
+    // so the section's own height) without touching the viewport, which is
+    // the one thing that would otherwise make GSAP re-measure it — so ask
+    // explicitly, once the new grid has painted, or the spacer keeps
+    // reserving the old (often taller) height and leaves a gap underneath.
+    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return () => cancelAnimationFrame(raf);
+    }
 
     const cards = grid.current.querySelectorAll("[data-card]");
     const activeTab = tablist.current?.querySelector('[aria-selected="true"]');
@@ -56,7 +69,10 @@ export default function Menu() {
         );
       }
     }, grid);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      cancelAnimationFrame(raf);
+    };
   }, [active]);
 
   return (
