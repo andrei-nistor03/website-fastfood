@@ -65,7 +65,7 @@ export default function Header() {
           />
         </a>
 
-        <nav className="hidden items-center gap-9 md:flex">
+        <nav className="hidden items-center gap-4 md:flex">
           {NAV.map((n) => (
             <a
               key={n.href}
@@ -74,21 +74,11 @@ export default function Header() {
                 e.preventDefault();
                 scrollToSection(n.href);
               }}
-              className="u-eyebrow text-u-white transition-colors hover:text-u-yellow"
+              className="u-band bg-u-yellow text-u-black text-[0.95rem] transition-transform duration-200 hover:-rotate-2"
             >
               {n.label}
             </a>
           ))}
-          <a
-            href="#locatii"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToSection("#locatii");
-            }}
-            className="u-band bg-u-yellow text-u-black text-[0.95rem] transition-transform duration-200 hover:-rotate-2"
-          >
-            Vino la noi
-          </a>
         </nav>
 
         <button
@@ -132,25 +122,12 @@ export default function Header() {
                   setOpen(false);
                   scrollToSection(n.href);
                 }}
-                className="u-band bg-u-white text-u-black text-[1.62rem]"
+                className="u-band bg-u-yellow text-u-black text-[1.62rem]"
               >
                 {n.label}
               </a>
             </li>
           ))}
-          <li>
-            <a
-              href="#locatii"
-              onClick={(e) => {
-                e.preventDefault();
-                setOpen(false);
-                scrollToSection("#locatii");
-              }}
-              className="u-band bg-u-yellow text-u-black text-[1.62rem]"
-            >
-              Vino la noi
-            </a>
-          </li>
         </ul>
       </div>
     </header>

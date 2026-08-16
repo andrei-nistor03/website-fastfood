@@ -39,18 +39,21 @@ export default function Lockup({
   size = "md",
   as: Tag = "div",
   className = "",
+  align = "items-start",
   animate = true,
 }: {
   lines: Band[];
   size?: keyof typeof SIZES;
   as?: "div" | "h1" | "h2" | "p";
   className?: string;
+  /** Cross-axis alignment utilities for the stacked bands, e.g. "items-center md:items-start". */
+  align?: string;
   animate?: boolean;
 }) {
   return (
     <Tag
       data-lockup={animate ? "" : undefined}
-      className={`flex flex-col items-start ${SIZES[size]} ${className}`}
+      className={`flex flex-col ${align} ${SIZES[size]} ${className}`}
     >
       {lines.map((line, i) => (
         <span

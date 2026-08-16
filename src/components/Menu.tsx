@@ -101,6 +101,7 @@ export default function Menu() {
             <Lockup
               as="h2"
               size="md"
+              align="items-center md:items-start"
               lines={[
                 { text: "Cool people", tone: "yellow", tilt: -2 },
                 { text: "eat", tone: "red", tilt: 3 },
@@ -115,7 +116,7 @@ export default function Menu() {
             ref={tablist}
             role="tablist"
             aria-label="Categorii din meniu"
-            className="relative z-10 mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-b-[3px] border-u-ink/15 pb-5 md:mt-16"
+            className="relative z-10 mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 border-b-[3px] border-u-ink/15 pb-5 md:mt-16 lg:justify-start"
           >
             {categories.map((c) => {
               const on = c.id === active;
@@ -161,14 +162,14 @@ export default function Menu() {
           role="tabpanel"
           id={`panou-${current.id}`}
           aria-labelledby={`tab-${current.id}`}
-          className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4"
+          className="mt-10 flex flex-wrap gap-4 md:justify-center md:gap-6 lg:grid lg:grid-cols-4"
         >
           {current.items.map((item, i) => (
             <li
               key={item.slug}
               data-card
               data-reveal="card"
-              className="u-hidden group relative flex flex-col overflow-hidden border-[3px] border-u-ink bg-u-red transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5"
+              className="u-hidden group relative flex basis-[calc(50%-0.5rem)] shrink-0 grow-0 flex-col overflow-hidden border-[3px] border-u-ink bg-u-red transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 md:basis-[calc(33.333%-1rem)] lg:basis-auto"
             >
               <div className="relative flex aspect-square items-center justify-center overflow-hidden p-3">
                 {/* A blob fragment per card — colour and rhythm in a

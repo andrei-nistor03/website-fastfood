@@ -26,9 +26,15 @@ const MODEL_OFFSET: [number, number, number] = [0.4113, -1.3508, 0.4705];
 // them can land inside it without dwarfing it.
 const TENDER_SCALE = 2;
 
-// Off-frame starting height for every tender, matching the bucket's own
-// pre-drop height so neither is visible before its fall begins.
-const TENDER_START_Y = 3.6;
+// Off-frame starting height for every tender. Deliberately much lower than
+// the bucket's own pre-drop height (3.6): with power2.in easing, a fall
+// starting that high spent most of its duration accelerating through
+// space still above the camera's frame, so the piece only "popped" into
+// view for the last fast fraction of the tween right before landing,
+// reading as a snap rather than a fall. Starting just above the frame's
+// top edge instead keeps the piece hidden pre-drop but visible for nearly
+// the whole tween, so the fall itself reads clearly.
+const TENDER_START_Y = 2.4;
 
 type TenderRestPose = {
   x: number;

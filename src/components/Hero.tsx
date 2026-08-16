@@ -10,23 +10,23 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden bg-u-red pb-10 pt-28 md:justify-center md:pb-16 md:pt-32"
+      className="relative isolate flex flex-col justify-end overflow-hidden bg-u-red pb-10 pt-16 lg:min-h-svh lg:justify-center lg:pb-16 lg:pt-32"
     >
       {/* p.15 — a fragment of a yellow ellipse, cut by the edge of the frame.
           Never a whole ellipse, never centred. Everything else sits on top. */}
       <div
-        className="u-blob right-[-34vw] top-[-16vh] h-[62vh] w-[62vh] md:right-[-20vw] md:top-[-22vh] md:h-[92vh] md:w-[92vh]"
+        className="u-blob right-[-34vw] top-[-16vh] h-[62vh] w-[62vh] lg:right-[-20vw] lg:top-[-22vh] lg:h-[92vh] lg:w-[92vh]"
         aria-hidden
       />
       <div
-        className="u-blob bottom-[-30vh] left-[-40vw] h-[34vh] w-[34vh] md:bottom-[-32vh] md:left-[-16vw] md:h-[46vh] md:w-[46vh]"
+        className="u-blob bottom-[-30vh] left-[-40vw] h-[34vh] w-[34vh] lg:bottom-[-32vh] lg:left-[-16vw] lg:h-[46vh] lg:w-[46vh]"
         aria-hidden
       />
 
       <HeroScene className="pointer-events-none absolute inset-0 z-[1]" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-[1fr_1.15fr] md:gap-4 md:px-10">
-        <div className="order-2 md:order-1">
+      <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 lg:grid-cols-[1fr_1.15fr] lg:gap-4 lg:px-10">
+        <div className="order-2 lg:order-1">
           {/* p.13 — the lockup as drawn in the manual: red / black / yellow. */}
           <Lockup
             as="h1"
@@ -67,7 +67,7 @@ export default function Hero() {
 
         <div
           data-hero="product"
-          className="relative order-1 -translate-y-4 md:order-2 md:-translate-y-12"
+          className="relative order-1 -translate-y-4 lg:order-2 lg:-translate-y-12"
         >
           <HeroProductStack />
         </div>
@@ -82,7 +82,7 @@ export default function Hero() {
         width={640}
         height={800}
         priority
-        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] w-[34vw] max-w-[250px] origin-bottom md:right-[50%] md:w-[15vw] z-100"
+        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] w-[34vw] max-w-[250px] origin-bottom lg:right-[50%] lg:w-[15vw] z-100"
       />
     </section>
   );

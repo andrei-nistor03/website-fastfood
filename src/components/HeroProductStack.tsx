@@ -209,7 +209,7 @@ export default function HeroProductStack({
   return (
     <div
       ref={stageRef}
-      className={`relative mx-auto aspect-square w-[88%] max-w-[560px] md:w-full ${className}`}
+      className={`relative mx-auto aspect-square w-[88%] max-w-[560px] lg:w-full ${className}`}
     >
       {ITEMS.map((item, i) => (
         <div
@@ -225,7 +225,7 @@ export default function HeroProductStack({
             width={880}
             height={880}
             priority={i === 0}
-            sizes="(max-width: 768px) 60vw, 32vw"
+            sizes="(max-width: 1024px) 60vw, 32vw"
             draggable={false}
             className="pointer-events-none w-full drop-shadow-[0_28px_46px_rgba(0,0,0,0.32)]"
           />

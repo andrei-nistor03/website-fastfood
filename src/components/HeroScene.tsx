@@ -91,9 +91,7 @@ export default function HeroScene({ className = "" }: { className?: string }) {
     if (!el) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    // Below the sm breakpoint the flakes are too small to read and the frame
-    // cost is not worth it.
-    if (reduced.matches || window.innerWidth < 640) return;
+    if (reduced.matches) return;
 
     let renderer: THREE.WebGLRenderer;
     try {

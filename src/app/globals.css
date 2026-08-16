@@ -130,15 +130,6 @@
   background-size: var(--checker-size, 24px) var(--checker-size, 24px);
 }
 
-@keyframes u-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
 /* Elements the entrance timeline will reveal — hidden up front so there is no
    flash of un-animated content before GSAP takes over. The `.js-motion` gate is
    only set when scripting is on AND the visitor has not asked for reduced
