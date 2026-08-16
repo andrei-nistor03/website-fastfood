@@ -51,7 +51,7 @@ const MenuCrumbBurst = forwardRef<MenuCrumbBurstHandle, { className?: string }>(
       if (!el) return;
 
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-      if (reduced.matches || window.innerWidth < 640) return;
+      if (reduced.matches) return;
 
       let renderer: THREE.WebGLRenderer;
       try {

@@ -194,6 +194,12 @@ function BucketRig({
           raf = requestAnimationFrame(arm);
           return;
         }
+        // Tablet viewports get a later pin (top hits top) so the section
+        // isn't grabbed while still mostly off-screen; desktop keeps the
+        // earlier "top 10%" trigger.
+        const isTablet = window.matchMedia(
+          "(min-width: 768px) and (max-width: 1023.98px)",
+        ).matches;
         trigger = ScrollTrigger.create({
           id: "bucket-drop",
           trigger: pinTarget,
@@ -201,7 +207,7 @@ function BucketRig({
           // drop kicks off sooner. Content above keeps scrolling until this
           // fires, so pushing this further down (e.g. "top 50%") widens the
           // gap that opens above the pinned section for the whole scrub range.
-          start: "top 10%",
+          start: isTablet ? "top 5%" : "top 10%",
           end: "+=1200",
           pin: true,
           scrub: 1,

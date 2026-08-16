@@ -162,7 +162,7 @@ export default function Menu() {
           role="tabpanel"
           id={`panou-${current.id}`}
           aria-labelledby={`tab-${current.id}`}
-          className="mt-10 flex flex-wrap gap-4 md:justify-center md:gap-6 lg:grid lg:grid-cols-4"
+          className="mt-10 flex flex-wrap gap-4 md:gap-6 lg:grid lg:grid-cols-4"
         >
           {current.items.map((item, i) => (
             <li
