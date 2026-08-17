@@ -156,8 +156,47 @@ export default function Motion() {
     window.addEventListener("load", onLoad);
     document.fonts?.ready.then(onLoad);
 
+    // Landing here with a `#section` hash (e.g. a header/footer link clicked
+    // from a legal page) needs its own handling: the bucket-drop pin
+    // (MenuBucketDrop.tsx) is armed asynchronously during hydration and, once
+    // it is, inserts a pin-spacer that pushes #locatii/#despre further down —
+    // exactly how much further isn't knowable up front. Rather than guess at
+    // a fixed number, keep re-measuring the target's live position every
+    // frame and snapping to it, until it holds still for a few frames in a
+    // row (layout has settled) or a timeout gives up. All of this happens
+    // behind the full-screen loader overlay, so the interim jumps aren't seen.
+    let settleRaf = 0;
+    const hash = window.location.hash;
+    if (hash) {
+      const html = document.documentElement;
+      const prevScrollBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+
+      const STABLE_FRAMES_NEEDED = 6;
+      const deadline = Date.now() + 3000;
+      let lastY = -1;
+      let stableFrames = 0;
+
+      const settle = () => {
+        const target = document.querySelector(hash);
+        if (target instanceof HTMLElement) {
+          const y = target.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: y, left: 0, behavior: "instant" });
+          stableFrames = Math.abs(y - lastY) < 1 ? stableFrames + 1 : 0;
+          lastY = y;
+        }
+        if (stableFrames >= STABLE_FRAMES_NEEDED || Date.now() > deadline) {
+          html.style.scrollBehavior = prevScrollBehavior;
+          return;
+        }
+        settleRaf = requestAnimationFrame(settle);
+      };
+      settleRaf = requestAnimationFrame(settle);
+    }
+
     return () => {
       window.removeEventListener("load", onLoad);
+      cancelAnimationFrame(settleRaf);
       ctx.revert();
     };
   }, []);

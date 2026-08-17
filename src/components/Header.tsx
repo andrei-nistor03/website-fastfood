@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type MouseEvent } from "react";
+import { usePathname } from "next/navigation";
 import { scrollToSection } from "@/lib/scrollToSection";
 
 const NAV = [
@@ -11,8 +12,24 @@ const NAV = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+  // The section ids these links target only exist on the homepage. Off it,
+  // they need to be a real navigation back to "/#…" instead of a scroll —
+  // scrollToSection's querySelector would just find nothing and no-op.
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const handleSectionClick =
+    (href: string, onNavigate?: () => void) => (e: MouseEvent) => {
+      if (!isHome) {
+        onNavigate?.();
+        return;
+      }
+      e.preventDefault();
+      onNavigate?.();
+      scrollToSection(href);
+    };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -39,11 +56,8 @@ export default function Header() {
         {/* p.8 — the mascot is the one element allowed to invade the logo's
             clear space, and the two should appear together wherever possible. */}
         <a
-          href="#top"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToSection("#top");
-          }}
+          href={isHome ? "#top" : "/"}
+          onClick={handleSectionClick("#top")}
           className="relative flex shrink-0 items-end gap-0"
           aria-label="Utopia Fried Chicken — începutul paginii"
         >
@@ -69,11 +83,8 @@ export default function Header() {
           {NAV.map((n) => (
             <a
               key={n.href}
-              href={n.href}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection(n.href);
-              }}
+              href={isHome ? n.href : `/${n.href}`}
+              onClick={handleSectionClick(n.href)}
               className="u-band bg-u-yellow text-u-black text-[0.95rem] transition-transform duration-200 hover:-rotate-2"
             >
               {n.label}
@@ -116,12 +127,8 @@ export default function Header() {
           {NAV.map((n) => (
             <li key={n.href}>
               <a
-                href={n.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setOpen(false);
-                  scrollToSection(n.href);
-                }}
+                href={isHome ? n.href : `/${n.href}`}
+                onClick={handleSectionClick(n.href, () => setOpen(false))}
                 className="u-band bg-u-yellow text-u-black text-[1.62rem]"
               >
                 {n.label}
