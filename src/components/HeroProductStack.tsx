@@ -4,16 +4,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-/**
- * A 4-product stack: one hero item big up front, two smaller items side by
- * side just behind it, and a fourth item hidden completely behind the pile —
- * it only becomes visible once a click shuffles it into one of the three
- * visible spots. Click anywhere on the stack to cycle the next product to
- * the front (this also happens on its own every few seconds). Hovering a
- * product spreads the visible cards apart so the back ones read more
- * clearly, and the whole pile drifts with a slow idle float.
- */
-
 type Item = { slug: string; alt: string };
 
 const ITEMS: Item[] = [
