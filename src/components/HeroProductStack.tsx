@@ -38,6 +38,13 @@ const FRONT_ITEM_SCALE: Record<string, number> = {
   "gogoasa-biscoff": 0.8,
 };
 
+// Slot offsets below are authored in pixels against a stage this wide. The
+// stage itself is fluid (88vw, capped here), so every x/y is multiplied by
+// stageWidth / DESIGN_WIDTH before it reaches GSAP — otherwise the side cards
+// keep their desktop spread on a ~350px phone stage and get pushed out past
+// the edge, where the hero's overflow-hidden clips them away.
+const DESIGN_WIDTH = 560;
+
 // Resting positions by depth: 0 = big hero in front, 1/2 = smaller cards
 // side by side just behind it, 3 = fully hidden behind the pile.
 const REST_SLOTS = [
@@ -58,14 +65,19 @@ const HOVER_SLOTS = [
 
 const AUTOPLAY_MS = 3000;
 
-function targetFor(depth: number, hovering: boolean, slug: string) {
+function targetFor(
+  depth: number,
+  hovering: boolean,
+  slug: string,
+  unit: number,
+) {
   const itemScale =
     (ITEM_SCALE[slug] ?? 1) * (depth === 0 ? (FRONT_ITEM_SCALE[slug] ?? 1) : 1);
   if (depth === 3) {
     const s = REST_SLOTS[3];
     return {
-      x: s.x,
-      y: s.y,
+      x: s.x * unit,
+      y: s.y * unit,
       rotation: s.rotate,
       scale: s.scale * itemScale,
       autoAlpha: 0,
@@ -74,8 +86,8 @@ function targetFor(depth: number, hovering: boolean, slug: string) {
   }
   const s = hovering ? HOVER_SLOTS[depth] : REST_SLOTS[depth];
   return {
-    x: s.x,
-    y: s.y,
+    x: s.x * unit,
+    y: s.y * unit,
     rotation: s.rotate,
     scale: s.scale * itemScale,
     autoAlpha: 1,
@@ -96,6 +108,16 @@ export default function HeroProductStack({
   const hoverCount = useRef(0);
   const autoplayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reducedMotion = useRef(false);
+  const unit = useRef(1);
+  // Touch browsers fire a synthetic mouseenter on tap but often no matching
+  // mouseleave, which would latch the hover spread on and stall the autoplay
+  // for good. Only devices that can really hover get the hover behaviour.
+  const canHover = useRef(true);
+
+  const measure = () => {
+    const w = stageRef.current?.offsetWidth ?? DESIGN_WIDTH;
+    unit.current = w > 0 ? w / DESIGN_WIDTH : 1;
+  };
 
   const cycleFromFront = () => setOrder((o) => [...o.slice(1), o[0]]);
 
@@ -113,12 +135,21 @@ export default function HeroProductStack({
     reducedMotion.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    canHover.current = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches;
     const reduced = reducedMotion.current;
+    measure();
 
     order.forEach((itemIndex, depth) => {
       const el = cardRefs.current[itemIndex];
       if (!el) return;
-      const target = targetFor(depth, hovering.current, ITEMS[itemIndex].slug);
+      const target = targetFor(
+        depth,
+        hovering.current,
+        ITEMS[itemIndex].slug,
+        unit.current,
+      );
 
       if (first.current) {
         if (depth === 3) {
@@ -126,8 +157,8 @@ export default function HeroProductStack({
         } else if (!reduced) {
           gsap.set(el, target);
           gsap.from(el, {
-            x: target.x + (itemIndex % 2 === 0 ? -170 : 170),
-            y: target.y + 130,
+            x: target.x + (itemIndex % 2 === 0 ? -170 : 170) * unit.current,
+            y: target.y + 130 * unit.current,
             rotation: target.rotation + (itemIndex % 2 === 0 ? -55 : 55),
             scale: 0.3,
             autoAlpha: 0,
@@ -151,7 +182,29 @@ export default function HeroProductStack({
     first.current = false;
     scheduleAutoplay();
 
+    // The slot offsets are derived from the stage width, so a resize (or a
+    // phone rotating) has to re-place the pile — snapped, not tweened, since
+    // there's no motion to narrate here.
+    const onResize = () => {
+      measure();
+      order.forEach((itemIndex, depth) => {
+        const el = cardRefs.current[itemIndex];
+        if (!el) return;
+        gsap.set(el, {
+          ...targetFor(
+            depth,
+            hovering.current,
+            ITEMS[itemIndex].slug,
+            unit.current,
+          ),
+          overwrite: true,
+        });
+      });
+    };
+    window.addEventListener("resize", onResize);
+
     return () => {
+      window.removeEventListener("resize", onResize);
       if (autoplayTimer.current) clearTimeout(autoplayTimer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,6 +232,7 @@ export default function HeroProductStack({
   }, []);
 
   const applyHover = (isHovering: boolean) => {
+    if (!canHover.current) return;
     hoverCount.current = Math.max(
       0,
       hoverCount.current + (isHovering ? 1 : -1),
@@ -192,7 +246,7 @@ export default function HeroProductStack({
       const el = cardRefs.current[itemIndex];
       if (!el) return;
       gsap.to(el, {
-        ...targetFor(depth, nowHovering, ITEMS[itemIndex].slug),
+        ...targetFor(depth, nowHovering, ITEMS[itemIndex].slug, unit.current),
         duration: 0.45,
         ease: "power3.out",
         overwrite: true,

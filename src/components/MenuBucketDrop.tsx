@@ -11,29 +11,12 @@ import { Model as ChickenTender } from "./Krispy_fried_chicken";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// The authored model measures ~0.2 world units across at scale 1 — this
-// brings it up to a size that reads clearly against the camera framing
-// below without every position keyframe needing its own multiplier.
 const BASE_SCALE = 11;
 
-// The model's own mesh isn't centered on its local origin (measured via
-// Box3().setFromObject at a neutral transform), so animated rotation would
-// otherwise swing it off-frame — this re-centers it before any animation.
 const MODEL_OFFSET: [number, number, number] = [0.4113, -1.3508, 0.4705];
 
-// The tender model's own long axis measures ~1 world unit at scale 1 — this
-// brings a piece down to roughly a third of the bucket's width so six of
-// them can land inside it without dwarfing it.
 const TENDER_SCALE = 2;
 
-// Off-frame starting height for every tender. Deliberately much lower than
-// the bucket's own pre-drop height (3.6): with power2.in easing, a fall
-// starting that high spent most of its duration accelerating through
-// space still above the camera's frame, so the piece only "popped" into
-// view for the last fast fraction of the tween right before landing,
-// reading as a snap rather than a fall. Starting just above the frame's
-// top edge instead keeps the piece hidden pre-drop but visible for nearly
-// the whole tween, so the fall itself reads clearly.
 const TENDER_START_Y = 2.4;
 
 type TenderRestPose = {
@@ -45,16 +28,6 @@ type TenderRestPose = {
   rz: number;
 };
 
-// Landing spots, scattered around the bucket's rim center rather than the
-// bucket's overall bounding-box center — the box also covers the handle and
-// base, which sit well outside the opening. The rim center was found by
-// tracing the bucket mesh's own tall axis through its full transform chain
-// (group rotation/scale -> BASE_SCALE -> MODEL_OFFSET), the same technique
-// used to measure MODEL_OFFSET itself, landing at roughly (-0.19, 0.63,
-// -0.22) in this component's local space. x/y/z below are hand-tuned
-// scatter + stacking around that point; rx/ry/rz are just orientation
-// variety so the pieces don't look identical. All six are easy to nudge
-// individually to test different landing spreads.
 const TENDER_RESTS: TenderRestPose[] = [
   { x: -0.6, y: 0.6, z: -0.04, rx: 0, ry: 0, rz: 3 },
   { x: 0.38, y: 0.6, z: 0.34, rx: 0, ry: 0, rz: 2 },
@@ -64,17 +37,8 @@ const TENDER_RESTS: TenderRestPose[] = [
   { x: -0.02, y: 0.75, z: 0.2, rx: -0.3, ry: 0.6, rz: 2.5 },
 ];
 
-// How far into the bucket's own tl (in the same seconds used by its
-// tweens above) the first tender starts falling, and the gap between each
-// subsequent one — together these decide how "staggered" the rain-in reads.
 const TENDERS_START = 1.3;
 
-// The bucket's own drop+bounce (added up from the tweens above) runs
-// ~1.97s. Each tender's fall+settle below is scaled by the same ~2.74x
-// factor so one tender takes just as long as the bucket does, instead of
-// covering a similar fall distance in under half the time and reading as
-// sped-up next to it. The stagger is scaled the same amount to keep the
-// rain-in proportionally as cascaded as before.
 const TENDER_STAGGER = 0.33;
 
 function TenderPiece({
@@ -122,8 +86,6 @@ function BucketRig({
       group.position.set(0, 3.6, 0);
       group.rotation.set(-0.55, 0.7, -0.38);
 
-      // A fall + two diminishing bounces, keyed on position/rotation only —
-      // no squash-and-stretch, the shape stays intact through the whole hit.
       const tl = gsap.timeline({ paused: true });
       tl.to(group.position, { y: 0, duration: 0.85, ease: "power2.in" })
         .to(
@@ -138,11 +100,6 @@ function BucketRig({
         .to(group.position, { y: 0, duration: 0.28, ease: "power2.in" })
         .to(group.position, { y: 0.2, duration: 0.24, ease: "power2.out" });
 
-      // Tenders rain in on the same tl, starting mid-bounce so they land
-      // just after the bucket settles. Each is a sibling of `group` (not a
-      // child of it) so the bucket's own tumble on the way down doesn't
-      // drag them around before their turn — they only move once their own
-      // tween starts.
       tenderRefs.current.forEach((tender, i) => {
         if (!tender) return;
         const rest = TENDER_RESTS[i];
@@ -183,9 +140,25 @@ function BucketRig({
             ">",
           );
       });
+      const syncSpacerBackground = (pinTarget: HTMLElement) => {
+        const spacer = pinTarget.parentElement;
+        if (!spacer?.classList.contains("pin-spacer")) return;
+        const style = getComputedStyle(pinTarget);
+        spacer.classList.add("u-checker");
+        spacer.style.setProperty(
+          "--checker-a",
+          style.getPropertyValue("--checker-a"),
+        );
+        spacer.style.setProperty(
+          "--checker-b",
+          style.getPropertyValue("--checker-b"),
+        );
+        spacer.style.setProperty(
+          "--checker-size",
+          style.getPropertyValue("--checker-size"),
+        );
+      };
 
-      // The pin target's DOM ref lands on the parent a frame after this
-      // effect runs, so wait for it rather than silently skipping the pin.
       let raf = 0;
       let trigger: ScrollTrigger | null = null;
       const arm = () => {
@@ -194,36 +167,23 @@ function BucketRig({
           raf = requestAnimationFrame(arm);
           return;
         }
-        // Tablet viewports get a later pin (top hits top) so the section
-        // isn't grabbed while still mostly off-screen; desktop keeps the
-        // earlier "top 10%" trigger.
         const isTablet = window.matchMedia(
           "(min-width: 768px) and (max-width: 1023.98px)",
         ).matches;
         trigger = ScrollTrigger.create({
           id: "bucket-drop",
           trigger: pinTarget,
-          // Pins before the section reaches the top of the viewport so the
-          // drop kicks off sooner. Content above keeps scrolling until this
-          // fires, so pushing this further down (e.g. "top 50%") widens the
-          // gap that opens above the pinned section for the whole scrub range.
-          start: isTablet ? "top 5%" : "top 10%",
+          start: isTablet ? "top top" : "top 5%",
           end: "+=1200",
           pin: true,
           scrub: 1,
           animation: tl,
+          // A refresh (window resize, category switch, font/image load —
+          // see Motion.tsx and Menu.tsx) can rebuild the spacer node, so
+          // re-apply rather than relying on the one-time call below.
+          onRefresh: () => syncSpacerBackground(pinTarget),
         });
-        // This trigger is created late (after the model's own async setup),
-        // well after Motion.tsx has already created the triggers for every
-        // section below (Locations, About, ...). Those measured their start
-        // positions against a shorter, pre-pin document, so they're left
-        // stale once this pin inserts its spacer height. A plain refresh()
-        // re-measures geometry but does NOT recompute how much of that
-        // spacer earlier triggers should account for — GSAP only applies
-        // that correction to triggers in its internally sorted (by scroll
-        // position) list, and this pin was created and appended after that
-        // list was built. sort() rebuilds it in the pin's true document
-        // position before refresh() recalculates everyone downstream.
+        syncSpacerBackground(pinTarget);
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
       };
