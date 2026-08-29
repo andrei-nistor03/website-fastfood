@@ -77,12 +77,12 @@ export default function Hero() {
           posture, at any scale. Here it points straight at the menu. */}
       <Image
         data-hero="mascot"
-        src="/brand/m-point.webp"
+        src="/brand/m-point.svg"
         alt=""
-        width={640}
-        height={800}
+        width={348}
+        height={380}
         priority
-        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] w-[34vw] max-w-[250px] origin-bottom lg:right-[50%] lg:w-[15vw] z-100"
+        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] w-[34vw] max-w-[250px] origin-bottom lg:right-[50%] lg:w-[clamp(210px,15vw,460px)] lg:max-w-none z-100"
       />
     </section>
   );

@@ -1,10 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/figtree";
-import "@fontsource/zilla-slab/400.css";
-import "@fontsource/zilla-slab/400-italic.css";
-import "@fontsource/zilla-slab/500.css";
-import "@fontsource/zilla-slab/700.css";
-import "@fontsource/zilla-slab/700-italic.css";
 import "./globals.css";
 import Loader from "@/components/Loader";
 

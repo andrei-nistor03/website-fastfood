@@ -13,30 +13,18 @@ const ITEMS: Item[] = [
   { slug: "fries", alt: "Cartofi prăjiți Utopia" },
 ];
 
-// Product photos don't all fill their frame the same amount, so equal
-// GSAP scale still reads as different physical sizes — this trims the
-// worst offenders back down when they land in a bigger slot.
 const ITEM_SCALE: Record<string, number> = {
   "only-chicken-bucket": 1,
   "clasic-burger": 0.82,
   fries: 1,
 };
 
-// Extra correction applied only when the item is the front/main product —
-// the donut reads noticeably bigger than the others at that size.
 const FRONT_ITEM_SCALE: Record<string, number> = {
   "gogoasa-biscoff": 0.8,
 };
 
-// Slot offsets below are authored in pixels against a stage this wide. The
-// stage itself is fluid (88vw, capped here), so every x/y is multiplied by
-// stageWidth / DESIGN_WIDTH before it reaches GSAP — otherwise the side cards
-// keep their desktop spread on a ~350px phone stage and get pushed out past
-// the edge, where the hero's overflow-hidden clips them away.
 const DESIGN_WIDTH = 560;
 
-// Resting positions by depth: 0 = big hero in front, 1/2 = smaller cards
-// side by side just behind it, 3 = fully hidden behind the pile.
 const REST_SLOTS = [
   { x: 0, y: 16, rotate: -2, scale: 1.16 },
   { x: -122, y: 52, rotate: -8, scale: 0.58 },
@@ -44,9 +32,6 @@ const REST_SLOTS = [
   { x: 0, y: 34, rotate: 0, scale: 0.42 },
 ];
 
-// Hover target for the three visible depths only — cards spread further
-// apart and the back pair grows a touch so they're easier to make out.
-// Depth 3 stays put and stays hidden; it never previews on hover.
 const HOVER_SLOTS = [
   { x: 0, y: -4, rotate: -2, scale: 1.06 },
   { x: -196, y: 30, rotate: -12, scale: 0.72 },
@@ -99,9 +84,6 @@ export default function HeroProductStack({
   const autoplayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reducedMotion = useRef(false);
   const unit = useRef(1);
-  // Touch browsers fire a synthetic mouseenter on tap but often no matching
-  // mouseleave, which would latch the hover spread on and stall the autoplay
-  // for good. Only devices that can really hover get the hover behaviour.
   const canHover = useRef(true);
 
   const measure = () => {
@@ -117,10 +99,6 @@ export default function HeroProductStack({
     autoplayTimer.current = setTimeout(cycleFromFront, AUTOPLAY_MS);
   };
 
-  // Position every card according to its current depth in `order` — on the
-  // first run this is an entrance (visible cards fly in and land, the
-  // hidden one just appears hidden), after that it's a resettle following
-  // a click. Also (re)arms the auto-advance timer for the new order.
   useEffect(() => {
     reducedMotion.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -172,9 +150,6 @@ export default function HeroProductStack({
     first.current = false;
     scheduleAutoplay();
 
-    // The slot offsets are derived from the stage width, so a resize (or a
-    // phone rotating) has to re-place the pile — snapped, not tweened, since
-    // there's no motion to narrate here.
     const onResize = () => {
       measure();
       order.forEach((itemIndex, depth) => {
@@ -197,12 +172,8 @@ export default function HeroProductStack({
       window.removeEventListener("resize", onResize);
       if (autoplayTimer.current) clearTimeout(autoplayTimer.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order]);
 
-  // Slow, continuous idle float for the whole pile — independent of the
-  // per-card position tweens above, since it lives on the stage wrapper
-  // rather than the cards themselves.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = stageRef.current;
@@ -273,13 +244,6 @@ export default function HeroProductStack({
             draggable={false}
             className="pointer-events-none w-full drop-shadow-[0_28px_46px_rgba(0,0,0,0.32)]"
           />
-          {/* Hit region deliberately smaller than the rendered image — the
-              photos carry a lot of transparent padding, so hovering/clicking
-              only "counts" over the product's actual visual footprint. Always
-              mounted (never conditionally removed) so a click that shuffles
-              this card to the hidden depth can't unmount it out from under
-              an active hover and strand the hover-count. The hidden card's
-              region sits under the front card in z-order regardless. */}
           <div
             onClick={handleClick}
             onMouseEnter={() => applyHover(true)}

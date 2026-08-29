@@ -11,7 +11,7 @@ import { categories } from "@/data/menu";
 
 export default function Menu() {
   const [active, setActive] = useState(categories[0].id);
-  const grid = useRef<HTMLUListElement>(null);
+  const grid = useRef<HTMLDivElement>(null);
   const tablist = useRef<HTMLDivElement>(null);
   const headerRow = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -150,71 +150,129 @@ export default function Menu() {
             })}
           </div>
 
-          {current.note && (
-            <p className="u-eyebrow mt-6 inline-block bg-u-ink px-3 py-1.5 text-u-yellow">
-              {current.note}
-            </p>
+          {current.notes && current.notes.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {current.notes.map((note) => (
+                <p
+                  key={note}
+                  className="u-eyebrow inline-block bg-u-ink px-3 py-1.5 text-u-yellow"
+                >
+                  {note}
+                </p>
+              ))}
+            </div>
           )}
         </div>
 
-        <ul
+        <div
           ref={grid}
           role="tabpanel"
           id={`panou-${current.id}`}
           aria-labelledby={`tab-${current.id}`}
-          className="mt-10 flex flex-wrap gap-4 md:gap-6 lg:grid lg:grid-cols-4"
+          className="mt-10 flex flex-col gap-10"
         >
-          {current.items.map((item, i) => (
-            <li
-              key={item.slug}
-              data-card
-              data-reveal="card"
-              className="u-hidden group relative flex basis-[calc(50%-0.5rem)] shrink-0 grow-0 flex-col overflow-hidden border-[3px] border-u-ink bg-u-red transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 md:basis-[calc(33.333%-1rem)] lg:basis-auto"
-            >
-              <div className="relative flex aspect-square items-center justify-center overflow-hidden p-3">
-                {/* A blob fragment per card — colour and rhythm in a
-                    composition that would otherwise be too calm (p.15). */}
-                <span
-                  aria-hidden
-                  className={`u-blob h-[92%] w-[92%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 ${
-                    i % 3 === 0
-                      ? "-bottom-[52%] -left-[34%]"
-                      : i % 3 === 1
-                        ? "-right-[38%] -top-[48%]"
-                        : "-bottom-[56%] -right-[30%]"
-                  }`}
-                />
-                <Image
-                  src={`/produse/${item.slug}.webp`}
-                  alt={item.name}
-                  width={520}
-                  height={520}
-                  sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 22vw"
-                  className="relative z-[1] h-full w-full object-contain transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07] group-hover:-rotate-2"
-                />
-                {item.tag && (
-                  <span className="u-eyebrow absolute left-0 top-3 z-[2] -rotate-2 bg-u-yellow px-2.5 py-1 text-[0.62rem] text-u-black">
-                    {item.tag}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-1 flex-col gap-1.5 border-t-[3px] border-u-ink px-4 py-4">
-                <h3 className="text-[clamp(1.05rem,2vw,1.35rem)] leading-[0.95] text-u-white">
-                  {item.name}
+          {current.groups.map((group, gi) => (
+            <div key={group.title ?? `group-${gi}`}>
+              {group.title && (
+                <h3 className="u-eyebrow mb-4 inline-block -rotate-1 bg-u-yellow px-3 py-1.5 text-u-black">
+                  {group.title}
                 </h3>
-                <p className="text-[0.86rem] leading-[1.4] text-u-white/80">
-                  {item.desc}
-                </p>
-                {item.price && (
-                  <p className="mt-auto pt-2 font-bold text-u-yellow">
-                    {item.price}
-                  </p>
-                )}
-              </div>
-            </li>
+              )}
+              <ul className="flex flex-wrap gap-4 md:gap-6 lg:grid lg:grid-cols-4">
+                {group.items.map((item, i) => {
+                  const imageSrc =
+                    item.image === null
+                      ? null
+                      : `/produse/${item.image ?? item.slug}.webp`;
+                  return (
+                    <li
+                      key={item.slug}
+                      data-card
+                      data-reveal="card"
+                      className="u-hidden group relative flex basis-[calc(50%-0.5rem)] shrink-0 grow-0 flex-col overflow-hidden border-[3px] border-u-ink bg-u-red transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 md:basis-[calc(33.333%-1rem)] lg:basis-auto"
+                    >
+                      {imageSrc ? (
+                        <div className="relative flex aspect-square items-center justify-center overflow-hidden p-3">
+                          {/* A blob fragment per card — colour and rhythm in a
+                              composition that would otherwise be too calm (p.15). */}
+                          <span
+                            aria-hidden
+                            className={`u-blob h-[92%] w-[92%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 ${
+                              i % 3 === 0
+                                ? "-bottom-[52%] -left-[34%]"
+                                : i % 3 === 1
+                                  ? "-right-[38%] -top-[48%]"
+                                  : "-bottom-[56%] -right-[30%]"
+                            }`}
+                          />
+                          <Image
+                            src={imageSrc}
+                            alt={item.name}
+                            width={520}
+                            height={520}
+                            sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                            className="relative z-[1] h-full w-full object-contain transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07] group-hover:-rotate-2"
+                          />
+                          {item.tag && (
+                            <span className="u-eyebrow absolute left-0 top-3 z-[2] -rotate-2 bg-u-yellow px-2.5 py-1 text-[0.62rem] text-u-black">
+                              {item.tag}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        // Label-only card — no photography for this item, so
+                        // skip the image slot instead of showing a blank one.
+                        <span
+                          aria-hidden
+                          className={`u-blob absolute h-[92%] w-[92%] ${
+                            i % 3 === 0
+                              ? "-bottom-[52%] -left-[34%]"
+                              : i % 3 === 1
+                                ? "-right-[38%] -top-[48%]"
+                                : "-bottom-[56%] -right-[30%]"
+                          }`}
+                        />
+                      )}
+
+                      <div
+                        className={
+                          imageSrc
+                            ? "flex flex-1 flex-col gap-1.5 border-t-[3px] border-u-ink px-4 py-4"
+                            : "relative flex min-h-[128px] flex-1 flex-col items-center justify-center gap-1.5 px-4 py-6 text-center"
+                        }
+                      >
+                        <h3 className="text-[clamp(1.05rem,2vw,1.35rem)] leading-[0.95] text-u-white">
+                          {item.name}
+                        </h3>
+                        {item.desc && (
+                          <p className="text-[0.86rem] leading-[1.4] text-u-white/80">
+                            {item.desc}
+                          </p>
+                        )}
+                        {item.price && (
+                          <p
+                            className={
+                              imageSrc
+                                ? "mt-auto pt-2 font-bold text-u-yellow"
+                                : "pt-1 font-bold text-u-yellow"
+                            }
+                          >
+                            {item.price}
+                          </p>
+                        )}
+                        {!imageSrc && item.tag && (
+                          <span className="u-eyebrow -rotate-2 bg-u-yellow px-2.5 py-1 text-[0.62rem] text-u-black">
+                            {item.tag}
+                          </span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

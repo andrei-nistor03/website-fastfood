@@ -58,7 +58,10 @@ export default function Footer() {
               <p className="u-eyebrow mb-4 text-u-yellow">Legal</p>
               <ul className="flex flex-col gap-2 text-[0.98rem]">
                 <li>
-                  <a href="/termeni-si-conditii" className="hover:text-u-yellow">
+                  <a
+                    href="/termeni-si-conditii"
+                    className="hover:text-u-yellow"
+                  >
                     Termeni și condiții
                   </a>
                 </li>
@@ -71,7 +74,10 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="/politica-cookie-uri" className="hover:text-u-yellow">
+                  <a
+                    href="/politica-cookie-uri"
+                    className="hover:text-u-yellow"
+                  >
                     Politica de cookie-uri
                   </a>
                 </li>
@@ -84,10 +90,10 @@ export default function Footer() {
           {/* p.8 — logo and mascot together, always. */}
           <div className="flex items-end gap-1">
             <Image
-              src="/brand/m-heart.webp"
+              src="/brand/m-heart.svg"
               alt=""
-              width={260}
-              height={366}
+              width={255}
+              height={386}
               className="-mb-1 -mr-1 w-[42px]"
             />
             <Image
@@ -103,7 +109,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Utopia Fried Chicken. Pui prăjit. Fără
             scuze.
             <br />
-            Designat și creat de{" "}
+            Designed and created by{" "}
             <a
               href="https://linkhaus.ro"
               target="_blank"

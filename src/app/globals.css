@@ -1,6 +1,45 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
+   UTOPIA FRIED CHICKEN — typefaces (p.12 "FONTURI")
+   The manual calls for Azo Sans Black on titles/CTAs, falling back to
+   Azo Sans Uber/Super "in cazul in care, din diverse motive, acest lucru
+   nu e posibil" — we only have the Uber cut on hand, so that fallback is
+   exactly the path we're on. Uber is itself the heaviest cut in the Azo
+   Sans family (heavier than Black), so it's registered at weight 900:
+   that pairs it to the h1–h4 rule below with no synthetic fake-bold on
+   top of an already-black face.
+
+   Zilla Slab (Regular + Bold) is the body/paragraph face. No italic file
+   was supplied, so `font-style: italic` on it (see About.tsx's pull
+   quote) renders as a browser-synthesized oblique rather than a true
+   italic cut — close enough visually, but flag it if a real italic file
+   ever turns up. */
+@font-face {
+  font-family: "Azo Sans Uber";
+  src: url("/fonts/fonnts.com-Azo_Sans_Uber_Regular.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Zilla Slab";
+  src: url("/fonts/ZillaSlab-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Zilla Slab";
+  src: url("/fonts/ZillaSlab-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------
    UTOPIA FRIED CHICKEN — design tokens
    Every value here comes from the brand manual (UTOPIAFC_ghid, v25052026).
    Colours: p.7 "CULORI". Type ratio: p.12 "FONTURI" (x 1,62).
@@ -15,7 +54,7 @@
   --color-u-white: #ffffff;
   --color-u-cream: #faf9f6; /* off-white — never on the logo */
 
-  --font-display: "Figtree Variable", "Azo Sans", system-ui, sans-serif;
+  --font-display: "Azo Sans Uber", "Azo Sans", system-ui, sans-serif;
   --font-body: "Zilla Slab", Georgia, serif;
 
   /* p.12 — "Progresia ideală între nivelurile titlurilor este x 1,62" */

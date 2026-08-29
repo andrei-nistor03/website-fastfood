@@ -94,11 +94,11 @@ export default function About() {
 
           {/* p.11 — the mascot belongs anywhere the brand speaks. */}
           <Image
-            src="/brand/m-recline.webp"
+            src="/brand/m-recline.svg"
             alt=""
-            width={720}
-            height={610}
-            className="pointer-events-none absolute -top-[88px] right-4 w-[124px] md:-top-[152px] md:right-10 md:w-[204px]"
+            width={424}
+            height={238}
+            className="pointer-events-none absolute -top-[64px] right-4 w-[160px] md:-top-[126px] md:right-10 md:w-[260px]"
           />
         </div>
       </div>

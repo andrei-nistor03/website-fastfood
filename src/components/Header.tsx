@@ -62,10 +62,10 @@ export default function Header() {
           aria-label="Utopia Fried Chicken — începutul paginii"
         >
           <Image
-            src="/brand/m-lean.webp"
+            src="/brand/m-lean.svg"
             alt=""
-            width={120}
-            height={190}
+            width={268}
+            height={397}
             priority
             className="-mb-3 w-[34px] md:w-[42px]"
           />
@@ -120,10 +120,19 @@ export default function Header() {
 
       <div
         id="nav-mobil"
-        hidden={!open}
-        className="border-t-2 border-u-black/20 bg-u-red px-5 pb-7 pt-4 md:hidden"
+        aria-hidden={!open}
+        inert={!open}
+        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out md:hidden ${
+          open ? "max-h-[320px]" : "max-h-0"
+        }`}
       >
-        <ul className="flex flex-col gap-3">
+        <ul
+          className={`flex flex-col gap-3 border-u-black/20 bg-u-red px-5 pb-7 pt-4 transition-[opacity,transform,border-top-width] duration-300 ease-in-out ${
+            open
+              ? "translate-y-0 border-t-2 opacity-100 delay-100"
+              : "-translate-y-2 border-t-0 opacity-0"
+          }`}
+        >
           {NAV.map((n) => (
             <li key={n.href}>
               <a

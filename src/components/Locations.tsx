@@ -21,7 +21,7 @@ export default function Locations() {
           />
           <p className="max-w-[34ch] text-[1.05rem] text-u-white/65 md:pb-3 md:text-right">
             Două locații. Comanzi la casă sau iei la pachet — dacă e coadă,
-            merită așteptarea, prăjim la comandă.
+            merită așteptarea.
           </p>
         </div>
 
@@ -48,18 +48,25 @@ export default function Locations() {
 
                 <dl className="mt-8 flex flex-col gap-4 border-t border-u-white/15 pt-6 text-[0.98rem]">
                   <div>
-                    <dt className="u-eyebrow text-[0.62rem] text-u-yellow">Adresă</dt>
+                    <dt className="u-eyebrow text-[0.62rem] text-u-yellow">
+                      Adresă
+                    </dt>
                     <dd className="mt-1">
-                      {loc.street}, {loc.postcode} {loc.city}
+                      {loc.street}, {loc.postcode ? `${loc.postcode} ` : ""}
+                      {loc.city}
                     </dd>
                   </div>
                   <div>
-                    <dt className="u-eyebrow text-[0.62rem] text-u-yellow">Program</dt>
+                    <dt className="u-eyebrow text-[0.62rem] text-u-yellow">
+                      Program
+                    </dt>
                     <dd className="mt-1">{loc.hours}</dd>
                   </div>
                   {loc.phone && (
                     <div>
-                      <dt className="u-eyebrow text-[0.62rem] text-u-yellow">Telefon</dt>
+                      <dt className="u-eyebrow text-[0.62rem] text-u-yellow">
+                        Telefon
+                      </dt>
                       <dd className="mt-1">{loc.phone}</dd>
                     </div>
                   )}
@@ -71,17 +78,23 @@ export default function Locations() {
                   Deschide harta
                 </span>
                 <Image
-                  src={i === 0 ? "/brand/m-stand.webp" : "/brand/m-sit.webp"}
+                  src={i === 0 ? "/brand/m-stand.svg" : "/brand/m-sit.svg"}
                   alt=""
-                  width={320}
-                  height={420}
-                  className="pointer-events-none w-[74px] origin-bottom transition-transform duration-300 group-hover:-translate-y-1 group-hover:rotate-3 md:w-[92px]"
+                  width={i === 0 ? 248 : 380}
+                  height={i === 0 ? 390 : 350}
+                  className={`pointer-events-none origin-bottom transition-transform duration-300 group-hover:-translate-y-1 group-hover:rotate-3 ${
+                    // m-stand and m-sit have very different aspect ratios
+                    // (tall vs. wide) — sizing both off the same width made
+                    // the sitting mascot read noticeably smaller, so each
+                    // gets its own width tuned to land at roughly the same
+                    // rendered height.
+                    i === 0 ? "w-[84px] md:w-[105px]" : "w-[144px] md:w-[180px]"
+                  }`}
                 />
               </div>
             </a>
           ))}
         </div>
-
       </div>
     </section>
   );

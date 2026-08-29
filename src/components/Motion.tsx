@@ -177,12 +177,30 @@ export default function Motion() {
       let lastY = -1;
       let stableFrames = 0;
 
+      // MenuBucketDrop's <Canvas> is `hidden md:block` (see MenuBucketDrop.tsx)
+      // — below that breakpoint it never mounts, so its "bucket-drop"
+      // ScrollTrigger never arms. Below, don't wait on a pin that will
+      // never exist, or this loop burns its full 3s deadline forcing the
+      // scroll position back every frame — fighting any manual scroll the
+      // user makes in that window.
+      const canArmPin = window.matchMedia("(min-width: 768px)").matches;
+
       const settle = () => {
         const target = document.querySelector(hash);
         if (target instanceof HTMLElement) {
+          // The bucket-drop pin lives inside a react-three-fiber <Canvas>,
+          // which mounts on its own schedule rather than in lockstep with
+          // this effect — so on the first several frames here the pin (and
+          // its pin-spacer) can easily not exist yet. Nothing having moved
+          // yet is not the same as layout having settled: until the trigger
+          // shows up, hold off counting frames as "stable" at all, or this
+          // loop locks in the pre-spacer position and quits before the
+          // ~1200px reservation ever lands.
+          const pinArmed = canArmPin ? !!ScrollTrigger.getById("bucket-drop") : true;
           const y = target.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({ top: y, left: 0, behavior: "instant" });
-          stableFrames = Math.abs(y - lastY) < 1 ? stableFrames + 1 : 0;
+          stableFrames =
+            pinArmed && Math.abs(y - lastY) < 1 ? stableFrames + 1 : 0;
           lastY = y;
         }
         if (stableFrames >= STABLE_FRAMES_NEEDED || Date.now() > deadline) {
