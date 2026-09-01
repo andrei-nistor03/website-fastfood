@@ -1,97 +1,156 @@
 # Utopia Fried Chicken — landing page
 
-Next.js 15 · React 19 · TypeScript · Tailwind v4 · GSAP (ScrollTrigger) · three.js
+A single-page Next.js site for a Romanian fried-chicken brand (Arad +
+Timișoara), built directly against the brand manual
+(`UTOPIAFC_ghid_09062026`, v25052026). Wherever a design decision comes
+straight from a rule in that manual, the code cites the page number in a
+comment next to it — that's the fastest way to find *why* something looks
+the way it does.
 
-Every design decision traces back to `UTOPIAFC_ghid_09062026` (v25052026). Where
-the manual specifies something, the code cites the page in a comment.
+**Stack:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4
+· GSAP + ScrollTrigger · three.js / react-three-fiber
 
-## Run it
+## Quick start
 
 ```bash
 npm install
 npm run dev     # http://localhost:3000
 npm run build   # production build
-npm start
+npm start       # serve the production build
 ```
 
-No environment variables, no external services. Fonts are self-hosted from npm,
-so the site makes no third-party requests at runtime.
+No environment variables and no external services to configure. Fonts are
+self-hosted (`public/fonts`), so the running site makes no third-party
+network requests.
 
-## Structure
+## Project structure
 
 ```
 src/
   app/
-    globals.css        design tokens — colours, type scale, band + blob recipes
-    layout.tsx         metadata, self-hosted fonts, reduced-motion gate
-    page.tsx           section order
+    layout.tsx                        root layout: metadata, self-hosted fonts, reduced-motion gate
+    page.tsx                          homepage — just section order
+    globals.css                       design tokens (colours, type scale) + the band/blob/checker utilities
+    politica-cookie-uri/page.tsx      legal pages — static copy through the shared LegalPage layout
+    politica-de-confidentialitate/page.tsx
+    termeni-si-conditii/page.tsx
+
   components/
-    Lockup.tsx         the slogan-band device (p.13 / p.15) — the signature element
-    Header.tsx         sticky bar, logo + mascot, mobile nav
-    Hero.tsx           "Real Fried Chicken" lockup, bucket, mascot, blobs
-    CrumbField.tsx     three.js crumb drift (p.14 sanctions crumbs "cu măsură")
-    Ticker.tsx         marquee band
-    Menu.tsx           six category tabs, 36 product cards
-    Locations.tsx      Arad + Timișoara
-    About.tsx          condensed from p.4 / p.5 / p.6
+    Lockup.tsx                        the slogan-band device (manual p.13 / p.15) — the site's signature element
+    Header.tsx                        sticky bar: logo + mascot, desktop nav, mobile menu
+    Hero.tsx                          "Real Fried Chicken" lockup, blobs, hero layout
+    HeroScene.tsx                     three.js crumb drift behind the hero (manual p.14: motion "cu măsură")
+    HeroProductStack.tsx              the hovering/auto-cycling product stack in the hero
+    Ticker.tsx                        the scrolling marquee band under the hero
+    Menu.tsx                          category tabs + product grid
+    MenuBucketDrop.tsx                the 3D bucket-and-tenders drop, pinned to the menu header on scroll
+    MenuCrumbBurst.tsx                the crumb-puff particle effect fired on tab clicks
+    Kfc_bucket.jsx                    generated react-three-fiber wrapper for the bucket model (gltfjsx)
+    Krispy_fried_chicken.jsx          generated react-three-fiber wrapper for the tender model (gltfjsx)
+    Locations.tsx                     Arad + Timișoara cards
+    About.tsx                         condensed from manual p.4 / p.5 / p.6
     Footer.tsx
-    Motion.tsx         all GSAP choreography in one place
+    Loader.tsx                        full-page loading gate, held until fonts/assets/animations are ready
+    LegalPage.tsx                     shared header/footer shell for the three legal pages
+    Motion.tsx                        all scroll-triggered GSAP choreography, in one place
+
+  lib/
+    scrollToSection.ts                nav-link smooth scrolling (aware of the bucket-drop pin's scroll range)
+    prefersReducedMotion.ts           one shared `(prefers-reduced-motion: reduce)` check
+
   data/
-    menu.ts            the menu; add prices here
-    locations.ts       addresses and hours
+    menu.ts                           the menu — categories, groups, items, prices
+    locations.ts                      addresses, hours, phone numbers, map links
+
 public/
-  brand/               logo lockups + 6 mascot poses, extracted from the PDF
-  produse/             37 product renders, area-normalised to 880×880 WebP
+  brand/    logo lockups + 6 mascot poses, extracted from the manual
+  produse/  product renders (WebP, transparent background)
+  models/   .glb models for the 3D bucket + tender pieces
+  textures/ the bucket wrap texture
+  fonts/    self-hosted Azo Sans Uber + Zilla Slab
 ```
+
+Almost all interactivity lives in `Motion.tsx` (scroll-triggered reveals) and
+a handful of standalone effects (`HeroScene`, `HeroProductStack`,
+`MenuBucketDrop`, `MenuCrumbBurst`, `Loader`, `Ticker`). Everything else —
+`Header`, `Hero`, `Menu`, `Locations`, `About`, `Footer` — is static markup
+that those effects animate into place; none of them own animation logic
+themselves.
+
+## Editing content
+
+- **Menu.** Everything shown in the menu grid comes from `src/data/menu.ts`.
+  Add, remove, or reprice an item there and the grid, tabs, and category
+  notes update automatically — no component changes needed. `image` defaults
+  to the item's `slug`; pass `image: null` for a label-only card (used for
+  sauces and drinks, which don't have per-item photography) or point it at a
+  shared photo when several items reuse one render (e.g. every Crispy Strips
+  count uses the same `crispy-strips.webp`).
+- **Locations.** Addresses, hours, phone numbers, and map links live in
+  `src/data/locations.ts`.
 
 ## Design system
 
 | Token | Value | Source |
 | --- | --- | --- |
-| Utopia Red | `#E10019` | p.7 |
-| Utopia Yellow | `#FFC400` | p.7 |
-| Rich Black | `#221E1F` | p.7, sampled from the manual's own dark pages |
-| Off-white | `#FAF9F6` | p.7 — recommended for large light surfaces, never on the logo |
-| Type ratio | **1.62** | p.12 — "Progresia ideală între nivelurile titlurilor este x 1,62" |
+| Utopia Red | `#E10019` | manual p.7 |
+| Utopia Yellow | `#FFC400` | manual p.7 |
+| Rich Black | `#221E1F` | manual p.7 |
+| Off-white | `#FAF9F6` | manual p.7 — for large light surfaces, never on the logo |
+| Type ratio | **1.62** | manual p.12 — "Progresia ideală între nivelurile titlurilor este x 1,62" |
 
-**Typefaces.** Zilla Slab is the manual's body face and is used exactly as
-specified. Azo Sans is a commercial licence, so headlines use **Figtree Black**
-as a stand-in — geometric, same weight class, double-storey `a`. Buy the Azo Sans
-family and swap `--font-display` in `globals.css` to switch; nothing else changes.
+All of these are defined once, as CSS custom properties, in the `@theme`
+block of `src/app/globals.css`.
 
-**The signature device.** Section headings are all built from the same recipe as
-the brand's slogan lockups: a solid band per line, width proportional to the
-text, tilted 0–6°, band copying the tilt. `Lockup.tsx` takes a list of lines and
-tones, so new slogans are one array away. GSAP slams each band in individually.
+**Typefaces.** Both are the manual's real cuts, self-hosted from
+`public/fonts` — no substitutes. Headlines use **Azo Sans Uber** (the
+heaviest cut in the family, registered at weight 900); body copy uses
+**Zilla Slab** (Regular + Bold).
 
-**Graphic elements.** Blob fragments are cropped by the frame edge, never whole,
-never centred, always behind type — and used sparingly. The locations section
-deliberately has none.
+**The signature device.** Every heading on the site is built from the same
+recipe as the brand's slogan lockups: a solid band per line, its width
+proportional to the text, tilted 0–6°, with the text tilted to match.
+`Lockup.tsx` takes an array of `{ text, tone, tilt }` lines, so a new slogan
+is just a new array — `Motion.tsx` handles slamming each band into place on
+scroll.
+
+**Graphic elements.** Yellow blob fragments (`.u-blob`) are always cropped by
+the frame edge — never whole, never centred, always behind the type — and
+used sparingly; the locations section deliberately has none. The checker
+pattern (`.u-checker`) reuses the same conic-gradient utility everywhere it
+appears, tinted per section via CSS custom properties.
 
 ## Accessibility
 
-- Reduced motion: the crumb field never initialises and no content is hidden.
-  The `.js-motion` class gates all hiding, so no re-render can strip content from
-  a reduced-motion visitor.
-- Works with JavaScript disabled — everything is server-rendered.
-- Yellow focus ring at 3px, visible on red, black and cream.
-- Tabs use `role="tablist"` with `aria-selected` / `aria-controls`.
-- Mascots are decorative and carry empty `alt`.
+- **Reduced motion.** Nothing is ever hidden by script alone: the
+  `.js-motion` class (set only when scripting is available *and*
+  `prefers-reduced-motion` is not set) gates every `u-hidden` element, so a
+  reduced-motion visitor never has content stripped out from under them. The
+  three.js effects (`HeroScene`, `MenuCrumbBurst`, `MenuBucketDrop`) all
+  check the same media query and simply don't initialise.
+- **No-JS.** The page is server-rendered; with scripting disabled, visitors
+  see the fully laid-out (unanimated) page rather than a blank or broken one.
+- **Focus.** A 3px yellow focus ring, with a black variant on yellow
+  surfaces, so it stays visible on red, black, and cream backgrounds alike.
+- **Tabs.** The menu category switcher uses `role="tablist"` with
+  `aria-selected` / `aria-controls`, wired up properly to its panel.
+- **Mascots** are decorative throughout and carry an empty `alt`.
 
 ## Open items before launch
 
-1. **Timișoara address — needs confirming.** "Utopia Fried Chicken" has no Google
-   Maps listing in Timișoara. `src/data/locations.ts` currently uses
-   Aleea Studenților 21 (the Utopia location there, +40 728 031 962) and is
-   flagged with a `TODO`. Arad is verified: Bulevardul Revoluției 35, 4.9★.
-2. **Prices.** None were available. Every item in `menu.ts` takes an optional
-   `price` field that the card already renders — add `price: "32 lei"` and it
-   appears. No layout work needed.
-3. **Product descriptions.** Written from the product photographs in the
-   manual's voice (p.6: ingredients, short sentences, no "experiență culinară").
-   Worth one pass against the real recipes.
-4. **One filename looks like a typo.** `Frieds crispy bucket` is rendered as
-   "Friends Crispy" on the assumption that's what was meant.
-5. **Ordering.** The CTAs point at the locations section. Wire them to Tazz,
-   Glovo or Wolt when those listings exist.
-6. Add a real favicon and an Open Graph image — currently the logo stands in.
+1. **Timișoara — hours and phone need confirming.** The address itself
+   (Calea Circumvalațiunii 35) and its Google Maps link are client-confirmed.
+   The hours and phone number in `src/data/locations.ts` are still carried
+   over from the old address (Aleea Studenților 21) and are flagged with a
+   `TODO` there — update them once the new location's own details are known.
+2. **Product descriptions.** Written from the product photography in the
+   manual's voice (p.6: ingredients, short sentences, no
+   "experiență culinară"). Worth one pass against the real recipes before
+   launch.
+3. **One filename looks like a typo.** `frieds-crispy-bucket.webp` is used
+   for the "Friends Crispy Bucket" item, on the assumption that's what was
+   meant.
+4. **Ordering.** The CTAs currently point at the locations section. Wire
+   them to Tazz, Glovo, or Wolt once those listings exist.
+5. **Add a real favicon and an Open Graph image.** The logo currently stands
+   in for both (`src/app/layout.tsx`).
