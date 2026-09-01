@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 /**
  * One place for the page's motion, so the individual sections stay static and
@@ -11,11 +12,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  */
 export default function Motion() {
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-
     // Nothing is hidden in the first place when reduced motion is requested
     // (see the `.js-motion` gate in layout.tsx), so there is nothing to undo.
-    if (reduced.matches) return;
+    if (prefersReducedMotion()) return;
 
     gsap.registerPlugin(ScrollTrigger);
 

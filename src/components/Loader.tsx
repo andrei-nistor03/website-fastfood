@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useProgress } from "@react-three/drei";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 /**
  * A full-page gate over everything else: the hero's raw-three crumb field,
@@ -54,7 +55,7 @@ export default function Loader() {
     const minTimer = setTimeout(() => setMinElapsed(true), MIN_VISIBLE_MS);
     const maxTimer = setTimeout(() => setForced(true), MAX_WAIT_MS);
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     if (!reduced && logoRef.current) {
       gsap.from(logoRef.current, {
         autoAlpha: 0,
@@ -87,7 +88,7 @@ export default function Loader() {
 
     document.documentElement.classList.remove("u-loading-lock");
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     if (reduced || !overlayRef.current) {
       setHidden(true);
       return;

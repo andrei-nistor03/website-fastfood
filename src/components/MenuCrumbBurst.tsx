@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import * as THREE from "three";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 /**
  * A short crumb puff behind whichever menu tab was just clicked — the same
@@ -50,8 +51,7 @@ const MenuCrumbBurst = forwardRef<MenuCrumbBurstHandle, { className?: string }>(
       const el = host.current;
       if (!el) return;
 
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-      if (reduced.matches) return;
+      if (prefersReducedMotion()) return;
 
       let renderer: THREE.WebGLRenderer;
       try {

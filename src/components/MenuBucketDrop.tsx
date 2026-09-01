@@ -6,6 +6,7 @@ import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 import { Model as KfcBucket } from "./Kfc_bucket";
 import { Model as ChickenTender } from "./Krispy_fried_chicken";
 
@@ -68,9 +69,7 @@ function BucketRig({
       const group = groupRef.current;
       if (!group) return;
 
-      const reduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+      const reduced = prefersReducedMotion();
       if (reduced) {
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, -0.04);

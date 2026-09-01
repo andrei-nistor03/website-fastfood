@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type CSSProperties, type MouseEvent } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import { scrollToSection } from "@/lib/scrollToSection";
 
@@ -51,7 +51,6 @@ export default function Header() {
         scrolled ? "shadow-[0_2px_0_0_rgba(0,0,0,0.35)]" : ""
       }`}
     >
-    
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-5 py-3 md:px-10 md:py-4">
         {/* p.8 — the mascot is the one element allowed to invade the logo's
             clear space, and the two should appear together wherever possible. */}

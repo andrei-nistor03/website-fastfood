@@ -8,6 +8,15 @@ import Lockup from "./Lockup";
 import MenuBucketDrop from "./MenuBucketDrop";
 import MenuCrumbBurst, { type MenuCrumbBurstHandle } from "./MenuCrumbBurst";
 import { categories } from "@/data/menu";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
+
+// Each card's blob fragment sits in a different corner, cycling by index so
+// neighbouring cards never repeat the same placement.
+const CARD_BLOB_CORNERS = [
+  "-bottom-[52%] -left-[34%]",
+  "-right-[38%] -top-[48%]",
+  "-bottom-[56%] -right-[30%]",
+];
 
 export default function Menu() {
   const [active, setActive] = useState(categories[0].id);
@@ -29,16 +38,9 @@ export default function Menu() {
       return;
     }
 
-    // MenuBucketDrop pins this whole section, and its pin-spacer height is
-    // only measured once against whichever category was active when the
-    // pin was created. Switching category changes the grid's row count (and
-    // so the section's own height) without touching the viewport, which is
-    // the one thing that would otherwise make GSAP re-measure it — so ask
-    // explicitly, once the new grid has painted, or the spacer keeps
-    // reserving the old (often taller) height and leaves a gap underneath.
     const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion()) {
       return () => cancelAnimationFrame(raf);
     }
 
@@ -197,13 +199,7 @@ export default function Menu() {
                               composition that would otherwise be too calm (p.15). */}
                           <span
                             aria-hidden
-                            className={`u-blob h-[92%] w-[92%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 ${
-                              i % 3 === 0
-                                ? "-bottom-[52%] -left-[34%]"
-                                : i % 3 === 1
-                                  ? "-right-[38%] -top-[48%]"
-                                  : "-bottom-[56%] -right-[30%]"
-                            }`}
+                            className={`u-blob h-[92%] w-[92%] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 ${CARD_BLOB_CORNERS[i % 3]}`}
                           />
                           <Image
                             src={imageSrc}
@@ -224,13 +220,7 @@ export default function Menu() {
                         // skip the image slot instead of showing a blank one.
                         <span
                           aria-hidden
-                          className={`u-blob absolute h-[92%] w-[92%] ${
-                            i % 3 === 0
-                              ? "-bottom-[52%] -left-[34%]"
-                              : i % 3 === 1
-                                ? "-right-[38%] -top-[48%]"
-                                : "-bottom-[56%] -right-[30%]"
-                          }`}
+                          className={`u-blob absolute h-[92%] w-[92%] ${CARD_BLOB_CORNERS[i % 3]}`}
                         />
                       )}
 

@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 gsap.registerPlugin(useGSAP);
 
@@ -44,10 +45,7 @@ export default function Ticker() {
       const block = blockRef.current;
       if (!track || !block) return;
 
-      const reduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-      if (reduced) return;
+      if (prefersReducedMotion()) return;
 
       const blockWidth = block.scrollWidth;
       if (!blockWidth) return;

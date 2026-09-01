@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 type Item = { slug: string; alt: string };
 
@@ -100,9 +101,7 @@ export default function HeroProductStack({
   };
 
   useEffect(() => {
-    reducedMotion.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    reducedMotion.current = prefersReducedMotion();
     canHover.current = window.matchMedia(
       "(hover: hover) and (pointer: fine)",
     ).matches;
@@ -175,7 +174,7 @@ export default function HeroProductStack({
   }, [order]);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     const el = stageRef.current;
     if (!el) return;
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
 
 /**
  * Manual p.14 "FOTOGRAFIE": a little theatrical movement is allowed — crumbs,
@@ -90,8 +91,7 @@ export default function HeroScene({ className = "" }: { className?: string }) {
     const el = host.current;
     if (!el) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduced.matches) return;
+    if (prefersReducedMotion()) return;
 
     let renderer: THREE.WebGLRenderer;
     try {
