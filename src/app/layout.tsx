@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     locale: "ro_RO",
     type: "website",
   },
-  icons: { icon: "/brand/m-stand.svg", type: "image/svg+xml" },
+  icons: { icon: { url: "/brand/m-stand.svg", type: "image/svg+xml" } },
 };
 
 export const viewport: Viewport = {
