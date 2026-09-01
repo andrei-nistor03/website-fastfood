@@ -38,7 +38,7 @@ export default function About() {
           size="lg"
           lines={[
             { text: "Pui prăjit.", tone: "white", tilt: -2 },
-            { text: "Fără scuze.", tone: "black", tilt: 2.5 },
+            { text: "Fără scuze.", tone: "black", tilt: 1.3 },
           ]}
         />
 
