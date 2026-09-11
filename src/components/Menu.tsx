@@ -159,7 +159,7 @@ export default function Menu() {
                   }}
                   className={
                     on
-                      ? "u-band bg-u-red text-u-white text-[clamp(1.05rem,2.2vw,1.35rem)] -rotate-2"
+                      ? "u-band border-[3px] border-u-red bg-u-red text-u-white text-[clamp(1.05rem,2.2vw,1.35rem)] -rotate-2"
                       : "u-band border-[3px] border-u-ink/70 bg-transparent text-[clamp(1.05rem,2.2vw,1.35rem)] text-u-ink transition-[color,transform,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:-rotate-1 hover:border-u-ink hover:bg-u-ink hover:text-u-cream cursor-pointer"
                   }
                 >
