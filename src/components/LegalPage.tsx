@@ -21,7 +21,7 @@ export default function LegalPage({
           </h1>
           <p className="u-eyebrow mt-4 text-u-red">Actualizat la {updated}</p>
 
-          <div className="mt-10 flex flex-col gap-6 text-step-0 leading-[1.7] text-u-ink/85 [&_h2]:mb-2 [&_h2]:text-[1.1rem] [&_h2]:text-u-red [&_p+p]:mt-3">
+          <div className="mt-10 flex flex-col gap-6 text-step-0 leading-[1.7] text-u-ink/85 [&_h2]:mb-2 [&_h2]:text-[1.1rem] [&_h2]:text-u-red [&_p+p]:mt-3 [&_p]:text-justify">
             {children}
           </div>
         </div>

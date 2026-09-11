@@ -10,7 +10,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate flex flex-col justify-end overflow-hidden bg-u-red pb-10 pt-16 lg:min-h-svh lg:justify-center lg:pb-16 lg:pt-32"
+      className="relative isolate flex flex-col justify-end overflow-hidden bg-u-red pb-24 pt-16 lg:min-h-svh lg:justify-center lg:pb-16 lg:pt-32"
     >
       {/* p.15 — a fragment of a yellow ellipse, cut by the edge of the frame.
           Never a whole ellipse, never centred. Everything else sits on top. */}
@@ -27,20 +27,25 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-8 px-5 lg:grid-cols-[1fr_1.15fr] lg:gap-4 lg:px-10">
         <div className="order-2 lg:order-1">
-          {/* p.13 — the lockup as drawn in the manual: red / black / yellow. */}
+          {/* p.13 — the lockup as drawn in the manual: red / black / yellow.
+              Kept to short, single-phrase lines (no line wider than the
+              menu's "Pui prăjit." / "Fără scuze." precedent) so the band
+              stays on one row at every viewport — the phrase is long, so
+              it runs four lines instead of the usual two or three. */}
           <Lockup
             as="h1"
-            size="xl"
+            size="lg"
             lines={[
-              { text: "Real", tone: "white", tilt: -3 },
-              { text: "Fried", tone: "black", tilt: 2 },
-              { text: "Chicken", tone: "yellow", tilt: -1.5 },
+              { text: "Cool people", tone: "white", tilt: -3 },
+              { text: "eat", tone: "black", tilt: 2 },
+              { text: "Fried", tone: "yellow", tilt: -1.5 },
+              { text: "chicken", tone: "black", tilt: 2.5 },
             ]}
           />
 
           <div
             data-hero="cta"
-            className="u-hidden mt-8 flex flex-wrap items-center gap-3"
+            className="u-hidden mt-9 flex flex-wrap items-center gap-4"
           >
             <a
               href="#meniu"
@@ -48,7 +53,7 @@ export default function Hero() {
                 e.preventDefault();
                 scrollToSection("#meniu");
               }}
-              className="u-band bg-u-white text-u-black text-[clamp(1.05rem,2.4vw,1.35rem)] transition-transform duration-200 hover:-rotate-2 hover:scale-[1.03]"
+              className="inline-block border-[3px] border-u-ink bg-u-yellow px-7 py-4 font-display text-[clamp(1.1rem,2.6vw,1.55rem)] font-black uppercase leading-none tracking-[-0.015em] text-u-black shadow-[6px_6px_0_0_#221e1f] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#221e1f] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none md:px-9 md:py-5"
             >
               Vezi meniul
             </a>
@@ -58,7 +63,7 @@ export default function Hero() {
                 e.preventDefault();
                 scrollToSection("#locatii");
               }}
-              className="u-band border-[3px] border-u-white bg-transparent text-u-white text-[clamp(1.05rem,2.4vw,1.35rem)] transition-transform duration-200 hover:rotate-2 hover:scale-[1.03]"
+              className="inline-block border-[3px] border-u-white bg-transparent px-7 py-4 font-display text-[clamp(1.1rem,2.6vw,1.55rem)] font-black uppercase leading-none tracking-[-0.015em] text-u-white shadow-[6px_6px_0_0_#221e1f] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-u-white hover:text-u-black hover:shadow-[8px_8px_0_0_#221e1f] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none md:px-9 md:py-5"
             >
               Unde ne găsești
             </a>
@@ -67,7 +72,7 @@ export default function Hero() {
 
         <div
           data-hero="product"
-          className="relative order-1 -translate-y-4 lg:order-2 lg:-translate-y-12"
+          className="relative order-1 mt-6 lg:order-2 lg:mt-0 lg:-translate-y-12"
         >
           <HeroProductStack />
         </div>
@@ -82,7 +87,7 @@ export default function Hero() {
         width={348}
         height={380}
         priority
-        className="u-hidden pointer-events-none absolute -bottom-1 right-[-5vw] w-[34vw] max-w-[250px] origin-bottom lg:right-[50%] lg:w-[clamp(210px,15vw,460px)] lg:max-w-none z-100"
+        className="u-hidden pointer-events-none absolute bottom-0 right-[-5vw] w-[45vw] max-w-[345px] origin-bottom lg:bottom-[-4px] lg:right-[38%] lg:w-[clamp(210px,15vw,460px)] lg:max-w-none z-100"
       />
     </section>
   );

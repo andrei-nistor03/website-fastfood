@@ -10,7 +10,6 @@ type Item = { slug: string; alt: string };
 const ITEMS: Item[] = [
   { slug: "only-chicken-bucket", alt: "Bucket Utopia plin cu pui prăjit" },
   { slug: "clasic-burger", alt: "Burger Clasic Utopia" },
-  { slug: "gogoasa-biscoff", alt: "Gogoașă Biscoff Utopia" },
   { slug: "fries", alt: "Cartofi prăjiți Utopia" },
 ];
 
@@ -20,9 +19,7 @@ const ITEM_SCALE: Record<string, number> = {
   fries: 1,
 };
 
-const FRONT_ITEM_SCALE: Record<string, number> = {
-  "gogoasa-biscoff": 0.8,
-};
+const FRONT_ITEM_SCALE: Record<string, number> = {};
 
 const DESIGN_WIDTH = 560;
 
@@ -30,7 +27,6 @@ const REST_SLOTS = [
   { x: 0, y: 16, rotate: -2, scale: 1.16 },
   { x: -122, y: 52, rotate: -8, scale: 0.58 },
   { x: 122, y: 52, rotate: 8, scale: 0.58 },
-  { x: 0, y: 34, rotate: 0, scale: 0.42 },
 ];
 
 const HOVER_SLOTS = [
@@ -49,17 +45,6 @@ function targetFor(
 ) {
   const itemScale =
     (ITEM_SCALE[slug] ?? 1) * (depth === 0 ? (FRONT_ITEM_SCALE[slug] ?? 1) : 1);
-  if (depth === 3) {
-    const s = REST_SLOTS[3];
-    return {
-      x: s.x * unit,
-      y: s.y * unit,
-      rotation: s.rotate,
-      scale: s.scale * itemScale,
-      autoAlpha: 0,
-      zIndex: 1,
-    };
-  }
   const s = hovering ? HOVER_SLOTS[depth] : REST_SLOTS[depth];
   return {
     x: s.x * unit,
@@ -76,7 +61,7 @@ export default function HeroProductStack({
 }: {
   className?: string;
 }) {
-  const [order, setOrder] = useState<number[]>([0, 1, 2, 3]);
+  const [order, setOrder] = useState<number[]>([0, 1, 2]);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const first = useRef(true);
@@ -119,9 +104,7 @@ export default function HeroProductStack({
       );
 
       if (first.current) {
-        if (depth === 3) {
-          gsap.set(el, target);
-        } else if (!reduced) {
+        if (!reduced) {
           gsap.set(el, target);
           gsap.from(el, {
             x: target.x + (itemIndex % 2 === 0 ? -170 : 170) * unit.current,
@@ -202,7 +185,6 @@ export default function HeroProductStack({
     hovering.current = nowHovering;
 
     order.forEach((itemIndex, depth) => {
-      if (depth === 3) return;
       const el = cardRefs.current[itemIndex];
       if (!el) return;
       gsap.to(el, {

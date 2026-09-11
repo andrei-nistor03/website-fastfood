@@ -529,27 +529,4 @@ export const categories: Category[] = [
       },
     ],
   },
-  {
-    id: "desert",
-    label: "Desert",
-    notes: ["Fiecare gogoașă 5.99 lei"],
-    groups: [
-      {
-        items: [
-          {
-            slug: "gogoasa-biscoff",
-            name: "Gogoașă Biscoff",
-            desc: "umplutură cremoasă & bucăți de Biscoff",
-            price: "5.99 lei",
-          },
-          {
-            slug: "gogoasa-ciocolata",
-            name: "Gogoașă Ciocolată",
-            desc: "glazură & umplutură de ciocolată",
-            price: "5.99 lei",
-          },
-        ],
-      },
-    ],
-  },
 ];

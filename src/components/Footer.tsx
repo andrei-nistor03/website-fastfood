@@ -58,6 +58,11 @@ export default function Footer() {
               <p className="u-eyebrow mb-4 text-u-yellow">Legal</p>
               <ul className="flex flex-col gap-2 text-[0.98rem]">
                 <li>
+                  <a href="/alergeni" className="hover:text-u-yellow">
+                    Alergeni
+                  </a>
+                </li>
+                <li>
                   <a
                     href="/termeni-si-conditii"
                     className="hover:text-u-yellow"

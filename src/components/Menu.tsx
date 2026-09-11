@@ -45,6 +45,7 @@ export default function Menu() {
     }
 
     const cards = grid.current.querySelectorAll("[data-card]");
+    const tabs = tablist.current?.querySelectorAll("[role='tab']");
     const activeTab = tablist.current?.querySelector('[aria-selected="true"]');
 
     const ctx = gsap.context(() => {
@@ -61,13 +62,25 @@ export default function Menu() {
           overwrite: true,
         },
       );
+      // Clear any inline transform GSAP left on the tabs from a previous
+      // selection so a deselected tab drops back to its class-defined
+      // (unrotated) resting state instead of staying stuck at -2deg.
+      if (tabs?.length) {
+        gsap.set(tabs, { clearProps: "transform" });
+      }
       // The same band recipe as the entrance timeline — the newly active
       // tab gets struck into place rather than just swapping colour.
       if (activeTab) {
         gsap.fromTo(
           activeTab,
           { scale: 0.82, rotation: -9 },
-          { scale: 1, rotation: -2, duration: 0.4, ease: "back.out(2.4)" },
+          {
+            scale: 1,
+            rotation: -2,
+            duration: 0.4,
+            ease: "back.out(2.4)",
+            onComplete: () => gsap.set(activeTab, { clearProps: "transform" }),
+          },
         );
       }
     }, grid);
@@ -84,9 +97,13 @@ export default function Menu() {
       className="u-checker relative overflow-hidden py-10 md:py-12"
       style={
         {
+          // Low-contrast pass on the brand checkerboard: the same motif, but
+          // ink against a close charcoal grey at a larger scale, so it reads
+          // as ambient dark texture behind the grid instead of competing
+          // with the products.
           "--checker-a": "var(--color-u-ink)",
-          "--checker-b": "var(--color-u-white)",
-          "--checker-size": "180px",
+          "--checker-b": "color-mix(in srgb, var(--color-u-ink) 82%, var(--color-u-white))",
+          "--checker-size": "280px",
         } as CSSProperties
       }
       aria-labelledby="meniu-titlu"
@@ -105,9 +122,9 @@ export default function Menu() {
               size="md"
               align="items-center md:items-start"
               lines={[
-                { text: "Cool people", tone: "yellow", tilt: -2 },
-                { text: "eat", tone: "red", tilt: 3 },
-                { text: "Fried chicken", tone: "black", tilt: -3 },
+                { text: "Real", tone: "yellow", tilt: -2 },
+                { text: "Fried", tone: "red", tilt: 3 },
+                { text: "Chicken", tone: "black", tilt: -3 },
               ]}
             />
             <MenuBucketDrop pinTargetRef={sectionRef} />
@@ -143,7 +160,7 @@ export default function Menu() {
                   className={
                     on
                       ? "u-band bg-u-red text-u-white text-[clamp(1.05rem,2.2vw,1.35rem)] -rotate-2"
-                      : "u-band bg-transparent text-[clamp(1.05rem,2.2vw,1.35rem)] text-u-ink/45 transition-[color,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:text-u-ink cursor-pointer"
+                      : "u-band border-[3px] border-u-ink/70 bg-transparent text-[clamp(1.05rem,2.2vw,1.35rem)] text-u-ink transition-[color,transform,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:-rotate-1 hover:border-u-ink hover:bg-u-ink hover:text-u-cream cursor-pointer"
                   }
                 >
                   {c.label}
