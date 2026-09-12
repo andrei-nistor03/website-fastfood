@@ -39,12 +39,21 @@ export function scrollToSection(href: string) {
   // animation, so the browser and gsap chase a moving target and autoKill
   // reads that as user interference. Forcing `auto` for the duration of the
   // JS-driven scroll avoids that fight.
+  //
+  // autoKill is also why the mobile "Vezi meniul" jump used to fizzle out
+  // after a tiny glitch: iOS/Android keep the page coasting on momentum for
+  // a moment after a finger lifts, and tapping a nav link while that
+  // momentum is still settling fires native `scroll`/`touchmove` events
+  // that ScrollToPlugin's autoKill mistakes for the user manually
+  // scrolling, killing the tween a frame or two after it starts. These are
+  // deliberate, click-triggered jumps rather than something a stray scroll
+  // should be allowed to cancel, so autoKill is off here.
   const tweenTo = (y: number, onComplete?: () => void) => {
     const duration = gsap.utils.clamp(0.3, 1.4, Math.abs(y - window.scrollY) / 1400);
     gsap.to(window, {
       duration,
       ease: "power2.inOut",
-      scrollTo: { y, autoKill: true },
+      scrollTo: { y, autoKill: false },
       onComplete,
     });
   };
