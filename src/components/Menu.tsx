@@ -102,7 +102,8 @@ export default function Menu() {
           // as ambient dark texture behind the grid instead of competing
           // with the products.
           "--checker-a": "var(--color-u-ink)",
-          "--checker-b": "color-mix(in srgb, var(--color-u-ink) 82%, var(--color-u-white))",
+          "--checker-b":
+            "color-mix(in srgb, var(--color-u-ink) 82%, var(--color-u-white))",
           "--checker-size": "280px",
         } as CSSProperties
       }
@@ -122,9 +123,9 @@ export default function Menu() {
               size="md"
               align="items-center md:items-start"
               lines={[
-                { text: "Real", tone: "yellow", tilt: -2 },
-                { text: "Fried", tone: "red", tilt: 3 },
-                { text: "Chicken", tone: "black", tilt: -3 },
+                { text: "Cool people", tone: "yellow", tilt: -8, textTone: "red" },
+                { text: "eat", tone: "red", tilt: -7 },
+                { text: "Fried Chicken", tone: "black", tilt: -5 },
               ]}
             />
             <MenuBucketDrop pinTargetRef={sectionRef} />

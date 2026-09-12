@@ -18,13 +18,32 @@ export type Band = {
   tone: Tone;
   /** Degrees. The manual caps this at 6. */
   tilt?: number;
+  /** Overrides the band's text colour, independent of the tone's default. */
+  textTone?: Tone;
+  /** Adds a hard ink drop-shadow so the band doesn't blend into a same-tone background. */
+  shadow?: boolean;
 };
 
-const TONES: Record<Tone, string> = {
-  red: "bg-u-red text-u-white",
-  yellow: "bg-u-yellow text-u-black",
-  black: "bg-u-ink text-u-white",
-  white: "bg-u-white text-u-black",
+const BG_TONES: Record<Tone, string> = {
+  red: "bg-u-red",
+  yellow: "bg-u-yellow",
+  black: "bg-u-ink",
+  white: "bg-u-white",
+};
+
+// The default text colour paired with each background, per the manual.
+const DEFAULT_TEXT_TONES: Record<Tone, string> = {
+  red: "white",
+  yellow: "black",
+  black: "white",
+  white: "black",
+};
+
+const TEXT_TONES: Record<Tone, string> = {
+  red: "text-u-red",
+  yellow: "text-u-yellow",
+  black: "text-u-ink",
+  white: "text-u-white",
 };
 
 const SIZES = {
@@ -59,9 +78,11 @@ export default function Lockup({
         <span
           key={i}
           data-band={animate ? "" : undefined}
-          className={`u-band ${TONES[line.tone]} ${i > 0 ? "-mt-[0.05em]" : ""} ${
-            animate ? "u-hidden" : ""
-          }`}
+          className={`u-band ${BG_TONES[line.tone]} ${
+            TEXT_TONES[line.textTone ?? DEFAULT_TEXT_TONES[line.tone]]
+          } ${line.shadow ? "drop-shadow-[0_30px_50px_rgba(0,0,0,0.55)]" : ""} ${
+            i > 0 ? "-mt-[0.05em]" : ""
+          } ${animate ? "u-hidden" : ""}`}
           style={{ transform: `rotate(${line.tilt ?? 0}deg)` }}
         >
           {line.text}

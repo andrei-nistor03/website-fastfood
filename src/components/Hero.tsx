@@ -34,12 +34,17 @@ export default function Hero() {
               it runs four lines instead of the usual two or three. */}
           <Lockup
             as="h1"
-            size="lg"
+            size="xl"
             lines={[
-              { text: "Cool people", tone: "white", tilt: -3 },
-              { text: "eat", tone: "black", tilt: 2 },
-              { text: "Fried", tone: "yellow", tilt: -1.5 },
-              { text: "chicken", tone: "black", tilt: 2.5 },
+              { text: "Real", tone: "black", tilt: -3, shadow: true },
+              { text: "Fried", tone: "red", tilt: 2, shadow: true },
+              {
+                text: "Chicken",
+                tone: "yellow",
+                tilt: -1.5,
+                textTone: "red",
+                shadow: true,
+              },
             ]}
           />
 
