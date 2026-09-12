@@ -62,6 +62,7 @@ export default function HeroProductStack({
   className?: string;
 }) {
   const [order, setOrder] = useState<number[]>([0, 1, 2]);
+  const [loaded, setLoaded] = useState<boolean[]>(() => ITEMS.map(() => false));
   const stageRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const first = useRef(true);
@@ -223,7 +224,17 @@ export default function HeroProductStack({
             priority={i === 0}
             sizes="(max-width: 1024px) 60vw, 32vw"
             draggable={false}
-            className="pointer-events-none w-full drop-shadow-[0_28px_46px_rgba(0,0,0,0.32)]"
+            onLoad={() =>
+              setLoaded((prev) => {
+                if (prev[i]) return prev;
+                const next = [...prev];
+                next[i] = true;
+                return next;
+              })
+            }
+            className={`pointer-events-none w-full transition-[filter] duration-200 ${
+              loaded[i] ? "drop-shadow-[0_28px_46px_rgba(0,0,0,0.32)]" : ""
+            }`}
           />
           <div
             onClick={handleClick}
