@@ -32,7 +32,7 @@ const BG_TONES: Record<Tone, string> = {
 };
 
 // The default text colour paired with each background, per the manual.
-const DEFAULT_TEXT_TONES: Record<Tone, string> = {
+const DEFAULT_TEXT_TONES: Record<Tone, Tone> = {
   red: "white",
   yellow: "black",
   black: "white",
