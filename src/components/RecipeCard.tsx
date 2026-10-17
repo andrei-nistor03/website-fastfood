@@ -19,6 +19,8 @@ export default function RecipeCard({ product }: { product: Product }) {
     skipAllergenFooter,
     frozenNote,
     extraNote,
+    nutrition,
+    nutritionNote,
   } = product;
 
   // Sauces / sides / drinks: a single line that just repeats the product
@@ -111,6 +113,51 @@ export default function RecipeCard({ product }: { product: Product }) {
           {frozenNote ? <p className="italic text-u-ink/55">{frozenNote}</p> : null}
           {extraNote ? <p className="text-u-ink/70">{extraNote}</p> : null}
         </div>
+
+        {nutrition && nutrition.length > 0 ? (
+          <div className="mt-4">
+            <p className="u-eyebrow text-u-ink/50">Declarație nutrițională estimată</p>
+            <div className="mt-1 overflow-x-auto">
+              <table className="w-full min-w-[560px] border-collapse text-left text-[0.8rem]">
+                <thead>
+                  <tr className="text-u-ink/50">
+                    <th className="px-2 py-1.5 font-normal"></th>
+                    <th className="px-2 py-1.5 font-normal">Valoare energetică</th>
+                    <th className="px-2 py-1.5 font-normal">Grăsimi</th>
+                    <th className="px-2 py-1.5 font-normal">din care saturate</th>
+                    <th className="px-2 py-1.5 font-normal">Glucide</th>
+                    <th className="px-2 py-1.5 font-normal">din care zaharuri</th>
+                    <th className="px-2 py-1.5 font-normal">Proteine</th>
+                    <th className="px-2 py-1.5 font-normal">Sare</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {nutrition.map((row, i) => (
+                    <tr
+                      key={row.label}
+                      className={
+                        "border-t border-u-ink/10 align-top " +
+                        (i > 0 ? "font-semibold text-u-ink" : "text-u-ink/75")
+                      }
+                    >
+                      <td className="whitespace-nowrap px-2 py-1.5 font-semibold text-u-ink">{row.label}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.energy}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.fat}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.saturated}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.carbs}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.sugars}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.protein}</td>
+                      <td className="whitespace-nowrap px-2 py-1.5">{row.salt}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {nutritionNote ? (
+              <p className="mt-1 text-[0.8rem] italic text-u-ink/55">{nutritionNote}</p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </details>
   );

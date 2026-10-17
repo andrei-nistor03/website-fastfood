@@ -15,6 +15,8 @@ import {
   sosuriCategory,
   racoritoareCategory,
   informatiiImportante,
+  calculNutritional,
+  componenteNutritionale,
 } from "@/data/allergen-recipes";
 
 export const metadata: Metadata = {
@@ -23,20 +25,9 @@ export const metadata: Metadata = {
     "Ingredientele, gramajele și alergenii prezenți în preparatele Utopia Fried Chicken, conform Regulamentului (UE) nr. 1169/2011 și Legii nr. 321/2023.",
 };
 
-/** A boxed callout for the one Legea 321/2023 requirement not yet covered
- * by the operator's document (informațiile nutriționale) — kept visually
- * distinct so it can't be mistaken for a confirmed fact. */
-function NotaIncompleta({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="mt-2 rounded-md border border-u-red/30 bg-u-red/5 p-4 font-bold text-u-red">
-      {children}
-    </p>
-  );
-}
-
 export default function AlergeniPage() {
   return (
-    <LegalPage title="Alergeni" updated="12 septembrie 2026">
+    <LegalPage title="Alergeni" updated="17 octombrie 2026">
       <p>
         Acest document informează clienții Utopia Fried Chicken (operator:{" "}
         <strong>Utopia Burger SRL</strong>, Carol Davila 51, 300262
@@ -48,16 +39,14 @@ export default function AlergeniPage() {
         alimentare și Legii nr. 321/2023 privind informarea consumatorilor
         în sectorul HoReCa din România. Conținutul reproduce documentul
         oficial al operatorului, <strong>„Informații despre ingrediente,
-        alergeni și gramaje produse”</strong>, valabil din 03.09.2026.
+        alergeni și gramaje produse”</strong>, valabil din 17.10.2026.
       </p>
       <p className="text-[0.9rem] italic text-u-ink/60">
-        Textele scrise <span className="text-u-red">italic, în roșu</span> (ex.
-        „în curs de confirmare”) marchează ingrediente pentru care eticheta
-        reală a furnizorului nu a putut fi încă citită integral sau
-        confirmată — restul informațiilor provine direct de pe etichetele
-        furnizorilor sau din rețeta cunoscută a preparatului. Fiecare produs
+        Informațiile despre ingrediente și alergeni provin direct de pe
+        etichetele furnizorilor sau din rețeta preparatului. Fiecare produs
         de mai jos se poate extinde pentru a vedea tabelul complet de
-        rețetă.
+        rețetă și declarația nutrițională estimată (vezi secțiunea 15
+        pentru modul de calcul).
       </p>
 
       <div>
@@ -165,15 +154,49 @@ export default function AlergeniPage() {
       </div>
 
       <div>
-        <h2>15. Informații nutriționale</h2>
-        <NotaIncompleta>
-          NEINCLUSE în acest document. Legea 321/2023 cere minimum valoarea
-          energetică (kcal), grăsimi, carbohidrați și proteine per
-          produs/porție. Nu am afișat cifre estimative pentru a evita
-          informații nutriționale incorecte către clienți — secțiunea va fi
-          completată pe baza rețetelor exacte sau a unei analize de
-          laborator.
-        </NotaIncompleta>
+        <h2>15. Cum este calculată declarația nutrițională</h2>
+        <dl className="flex flex-col gap-3">
+          {calculNutritional.map((item) => (
+            <div key={item.title}>
+              <dt className="font-bold text-u-ink">{item.title}</dt>
+              <dd>{item.body}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[720px] border-collapse text-left text-[0.8rem]">
+            <thead>
+              <tr className="text-u-ink/50">
+                <th className="px-2 py-1.5 font-normal">Componenta (la 100 g)</th>
+                <th className="px-2 py-1.5 font-normal">Energie</th>
+                <th className="px-2 py-1.5 font-normal">Grăsimi</th>
+                <th className="px-2 py-1.5 font-normal">din care saturate</th>
+                <th className="px-2 py-1.5 font-normal">Glucide</th>
+                <th className="px-2 py-1.5 font-normal">din care zaharuri</th>
+                <th className="px-2 py-1.5 font-normal">Proteine</th>
+                <th className="px-2 py-1.5 font-normal">Sare</th>
+                <th className="px-2 py-1.5 font-normal">Sursa valorii</th>
+              </tr>
+            </thead>
+            <tbody>
+              {componenteNutritionale.map((c) => (
+                <tr key={c.name} className="border-t border-u-ink/10 align-top text-u-ink/75">
+                  <td className="px-2 py-1.5 font-semibold text-u-ink">{c.name}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.energy}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.fat}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.saturated}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.carbs}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.sugars}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.protein}</td>
+                  <td className="whitespace-nowrap px-2 py-1.5">{c.salt}</td>
+                  <td className={"px-2 py-1.5 " + (c.reference ? "italic text-u-red/70" : "")}>
+                    {c.source}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div>
@@ -181,8 +204,8 @@ export default function AlergeniPage() {
         <p>
           Acest document este un instrument de lucru întocmit pe baza
           informațiilor disponibile la data de mai jos și nu constituie
-          consultanță juridică. Secțiunea 15 și liniile marcate „în curs de
-          confirmare” în tabelele de rețetă sunt în curs de completare.
+          consultanță juridică. Declarațiile nutriționale sunt estimate prin
+          calcul (vezi secțiunea 15), nu măsurate în laborator.
           Responsabilitatea finală pentru acuratețea informațiilor afișate
           către clienți revine operatorului economic (Utopia Burger SRL).
           Pentru orice alergie sau intoleranță, te rugăm să confirmi cu
@@ -199,7 +222,7 @@ export default function AlergeniPage() {
           .
         </p>
         <p className="text-[0.85rem] italic text-u-ink/55">
-          Data întocmirii: 12 septembrie 2026. Valabil din: 03.09.2026.
+          Data întocmirii: 17 octombrie 2026. Valabil din: 17.10.2026.
         </p>
       </div>
     </LegalPage>
