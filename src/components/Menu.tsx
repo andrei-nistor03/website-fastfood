@@ -97,13 +97,9 @@ export default function Menu() {
       className="u-checker relative overflow-hidden py-10 md:py-12"
       style={
         {
-          // Low-contrast pass on the brand checkerboard: the same motif, but
-          // ink against a close charcoal grey at a larger scale, so it reads
-          // as ambient dark texture behind the grid instead of competing
-          // with the products.
-          "--checker-a": "var(--color-u-ink)",
-          "--checker-b":
-            "color-mix(in srgb, var(--color-u-ink) 82%, var(--color-u-white))",
+          // Full-contrast black and white brand checkerboard.
+          "--checker-a": "var(--color-u-black)",
+          "--checker-b": "var(--color-u-white)",
           "--checker-size": "280px",
         } as CSSProperties
       }
@@ -128,7 +124,7 @@ export default function Menu() {
                 { text: "Fried Chicken", tone: "black", tilt: -5 },
               ]}
             />
-            <MenuBucketDrop pinTargetRef={sectionRef} />
+            <MenuBucketDrop triggerRef={headerRow} />
           </div>
 
           {/* Tabs, built from the same band recipe as everything else. */}

@@ -42,6 +42,9 @@ const TENDERS_START = 1.3;
 
 const TENDER_STAGGER = 0.33;
 
+/** Real-time length of the full drop + tenders animation, in seconds. */
+const PLAY_DURATION = 2;
+
 function TenderPiece({
   innerRef,
 }: {
@@ -57,9 +60,9 @@ function TenderPiece({
 }
 
 function BucketRig({
-  pinTargetRef,
+  triggerRef,
 }: {
-  pinTargetRef?: RefObject<HTMLElement | null>;
+  triggerRef?: RefObject<HTMLElement | null>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const tenderRefs = useRef<(THREE.Group | null)[]>([]);
@@ -139,61 +142,36 @@ function BucketRig({
             ">",
           );
       });
-      const syncSpacerBackground = (pinTarget: HTMLElement) => {
-        const spacer = pinTarget.parentElement;
-        if (!spacer?.classList.contains("pin-spacer")) return;
-        const style = getComputedStyle(pinTarget);
-        spacer.classList.add("u-checker");
-        spacer.style.setProperty(
-          "--checker-a",
-          style.getPropertyValue("--checker-a"),
-        );
-        spacer.style.setProperty(
-          "--checker-b",
-          style.getPropertyValue("--checker-b"),
-        );
-        spacer.style.setProperty(
-          "--checker-size",
-          style.getPropertyValue("--checker-size"),
-        );
-      };
+      // Squeeze the whole choreography into ~2s of real time, keeping the
+      // relative timing of the bucket bounce and the staggered tenders.
+      tl.timeScale(tl.duration() / PLAY_DURATION);
 
       let raf = 0;
       let trigger: ScrollTrigger | null = null;
       const arm = () => {
-        const pinTarget = pinTargetRef?.current;
-        if (!pinTarget) {
+        const target = triggerRef?.current;
+        if (!target) {
           raf = requestAnimationFrame(arm);
           return;
         }
-        const isTablet = window.matchMedia(
-          "(min-width: 768px) and (max-width: 1023.98px)",
-        ).matches;
+        // Plays once when the header row scrolls into view, then stays at its
+        // final pose — no pinning, no scrubbing.
         trigger = ScrollTrigger.create({
-          id: "bucket-drop",
-          trigger: pinTarget,
-          start: isTablet ? "top top" : "top 5%",
-          end: "+=1200",
-          pin: true,
-          scrub: 1,
-          animation: tl,
-          // A refresh (window resize, category switch, font/image load —
-          // see Motion.tsx and Menu.tsx) can rebuild the spacer node, so
-          // re-apply rather than relying on the one-time call below.
-          onRefresh: () => syncSpacerBackground(pinTarget),
+          trigger: target,
+          start: "top 75%",
+          once: true,
+          onEnter: () => tl.play(),
         });
-        syncSpacerBackground(pinTarget);
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
       };
       arm();
 
       return () => {
         cancelAnimationFrame(raf);
         trigger?.kill();
+        tl.kill();
       };
     },
-    { dependencies: [pinTargetRef] },
+    { dependencies: [triggerRef] },
   );
 
   return (
@@ -220,10 +198,10 @@ function BucketRig({
 }
 
 export default function MenuBucketDrop({
-  pinTargetRef,
+  triggerRef,
 }: {
-  /** The header row (title + bucket) to pin while the drop/bounce plays out. */
-  pinTargetRef?: RefObject<HTMLElement | null>;
+  /** Element whose arrival in the viewport starts the one-shot drop animation. */
+  triggerRef?: RefObject<HTMLElement | null>;
 }) {
   return (
     <div
@@ -257,7 +235,7 @@ export default function MenuBucketDrop({
           intensity={0.5}
           color={0xffffff}
         />
-        <BucketRig pinTargetRef={pinTargetRef} />
+        <BucketRig triggerRef={triggerRef} />
       </Canvas>
     </div>
   );

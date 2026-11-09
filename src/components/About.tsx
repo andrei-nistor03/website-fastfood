@@ -6,18 +6,9 @@ import Lockup from "./Lockup";
  *  for the internal team. Tone per p.6: direct, warm, confident, dry. */
 
 const PILLARS = [
-  {
-    title: "Prăjim la comandă",
-    body: "Nu ținem pui sub lampă. Se prăjește când îl comanzi, se servește cât e fierbinte.",
-  },
-  {
-    title: "Porții oneste",
-    body: "Cât scrie în meniu, atât primești. Fără fotografii care promit altceva decât e în cutie.",
-  },
-  {
-    title: "Fără povești",
-    body: "Nu ne cerem scuze că suntem fast-food și nu pretindem că suntem altceva.",
-  },
+  "Ne place puiul prăjit cu personalitate. Cu o crustă care se aude de la prima mușcătură, condimente cât trebuie și gust care nu trece neobservat. La Utopia, asta e regula de bază.",
+  "Folosim pui românesc și punem accent pe ceea ce contează: gust, textură și porții care îți fac poftă. Nu încercăm să reinventăm mâncarea. Vrem doar să facem un fried chicken pe care să-l ții minte.",
+  "Fie că vii pentru un burger, crispy sau aripioare de pui, știi ce cauți. Ceva bun, crocant și făcut să fie savurat. Ne găsești în Arad și Timișoara.",
 ];
 
 export default function About() {
@@ -37,33 +28,10 @@ export default function About() {
           as="h2"
           size="lg"
           lines={[
-            { text: "Pui prăjit.", tone: "white", tilt: -2 },
+            { text: "Pui prăjit", tone: "white", tilt: -2 },
             { text: "Fără scuze.", tone: "black", tilt: 1.3 },
           ]}
         />
-
-        <div className="mt-14 grid grid-cols-1 gap-9 md:grid-cols-3 md:gap-12">
-          <p className="text-[1.05rem] leading-[1.6]">
-            <strong className="font-bold">
-              Puiul prăjit în România are o problemă:
-            </strong>{" "}
-            toată lumea se străduiește prea mult să pară altceva decât e.
-            Lanțurile mari servesc același pui, cu același zâmbet, de la
-            București la Bangkok.
-          </p>
-          <p className="text-[1.05rem] leading-[1.6]">
-            La celălalt capăt, fiecare sandviș vine învelit în hârtie kraft și
-            într-o poveste despre proveniență. Noi stăm în spațiul pe care nu îl
-            ocupă niciunul — cel în care mâncarea e lucrul esențial.
-          </p>
-          <p className="text-[1.05rem] leading-[1.6]">
-            Puiul prăjit nu trebuie să fie apologetic sau rafinat ca să fie bun.{" "}
-            <em className="font-bold italic">
-              Trebuie să fie picant, suficient și sincer.
-            </em>{" "}
-            Asta facem, în Arad și în Timișoara.
-          </p>
-        </div>
 
         {/* The manual sets its own pull quotes as two yellow slashes beside
             bold italic slab type. Same treatment here. */}
@@ -73,21 +41,19 @@ export default function About() {
             <span className="block h-[clamp(2rem,5vw,3.4rem)] w-[clamp(0.5rem,1.2vw,0.85rem)] -skew-x-12 bg-u-yellow" />
           </span>
           <blockquote className="max-w-[26ch] text-[clamp(1.35rem,3.4vw,2.624rem)] font-bold italic leading-[1.12] text-u-yellow md:max-w-[30ch]">
-            Porțiile sunt oneste, serviciul este rapid, iar experiența nu îți
-            cere să participi la o poveste.
+            „Mai puține vorbe. Mai mult crunch.”
           </blockquote>
         </figure>
 
         <div className="relative mt-28 grid grid-cols-1 gap-px border-[3px] border-u-black bg-u-black md:mt-24 md:grid-cols-3">
-          {PILLARS.map((p) => (
+          {PILLARS.map((text) => (
             <div
-              key={p.title}
+              key={text}
               data-reveal="card"
-              className="u-hidden bg-u-red px-6 py-8 md:px-8 md:py-10"
+              className="u-hidden bg-u-red px-7 py-10 md:px-10 md:py-14"
             >
-              <h3 className="text-[clamp(1.35rem,2.6vw,1.62rem)]">{p.title}</h3>
-              <p className="mt-3 text-[0.98rem] leading-[1.5] text-u-white/85">
-                {p.body}
+              <p className="text-justify hyphens-auto text-[clamp(1.2rem,1.7vw,1.45rem)] leading-[1.5]">
+                {text}
               </p>
             </div>
           ))}
