@@ -3,6 +3,19 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
 gsap.registerPlugin(ScrollToPlugin);
 
+/**
+ * Where the page should scroll to for a section. Normally its top; sections
+ * marked `data-scroll-align="end"` (Locații, whose Wolt order buttons sit at
+ * the bottom) align their bottom edge with the viewport's instead — unless the
+ * whole section already fits, in which case its top is used.
+ */
+export function sectionScrollY(target: HTMLElement) {
+  const rect = target.getBoundingClientRect();
+  const top = rect.top + window.scrollY;
+  if (target.dataset.scrollAlign !== "end") return top;
+  return Math.max(top, rect.bottom + window.scrollY - window.innerHeight);
+}
+
 export function scrollToSection(href: string) {
   const target = document.querySelector(href);
   if (!(target instanceof HTMLElement)) return;
@@ -14,8 +27,7 @@ export function scrollToSection(href: string) {
     html.style.scrollBehavior = prevScrollBehavior;
   };
 
-  const currentY = window.scrollY;
-  const targetY = target.getBoundingClientRect().top + currentY;
+  const targetY = sectionScrollY(target);
 
   // CSS `scroll-behavior: smooth` (globals.css) fights ScrollToPlugin's own
   // frame-by-frame scrollTo calls — each one kicks off its own native smooth

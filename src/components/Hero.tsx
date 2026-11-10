@@ -70,7 +70,7 @@ export default function Hero() {
               }}
               className="inline-block border-[3px] border-u-white bg-transparent px-7 py-4 font-display text-[clamp(1.1rem,2.6vw,1.55rem)] font-black uppercase leading-none tracking-[-0.015em] text-u-white shadow-[6px_6px_0_0_#221e1f] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-u-white hover:text-u-black hover:shadow-[8px_8px_0_0_#221e1f] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none md:px-9 md:py-5"
             >
-              Unde ne găsești
+              Comandă acum
             </a>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "@/lib/prefersReducedMotion";
+import { sectionScrollY } from "@/lib/scrollToSection";
 
 /**
  * One place for the page's motion, so the individual sections stay static and
@@ -177,7 +178,7 @@ export default function Motion() {
       const settle = () => {
         const target = document.querySelector(hash);
         if (target instanceof HTMLElement) {
-          const y = target.getBoundingClientRect().top + window.scrollY;
+          const y = sectionScrollY(target);
           window.scrollTo({ top: y, left: 0, behavior: "instant" });
           stableFrames = Math.abs(y - lastY) < 1 ? stableFrames + 1 : 0;
           lastY = y;
