@@ -56,6 +56,14 @@ export default function PoliticaDeConfidentialitatePage() {
           transferăm date către terți în scopuri de marketing fără acordul
           tău.
         </p>
+        <p>
+          Dacă accepți cookie-urile de marketing, transmitem către Meta
+          Platforms Ireland Ltd. (Meta Pixel și Conversions API) date tehnice
+          precum adresa IP, tipul de browser, paginile vizitate și
+          identificatorii din cookie-urile Meta, pentru a măsura eficiența
+          reclamelor noastre. Îți poți retrage acordul oricând din „Setări
+          cookie-uri”, în subsolul paginii.
+        </p>
       </div>
 
       <div>

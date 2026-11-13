@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Loader from "@/components/Loader";
+import MetaPixel from "@/components/MetaPixel";
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utopiafriedchicken.ro"),
@@ -43,6 +45,8 @@ export default function RootLayout({
       <body>
         <Loader />
         {children}
+        <CookieConsent />
+        <MetaPixel />
       </body>
     </html>
   );

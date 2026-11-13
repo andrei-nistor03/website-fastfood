@@ -5,3 +5,7 @@ next-env.d.ts
 *.tsbuildinfo
 .DS_Store
 .chrome-profile*
+
+# Local secrets (Meta Conversions API token etc.) — never commit
+.env
+.env*.local

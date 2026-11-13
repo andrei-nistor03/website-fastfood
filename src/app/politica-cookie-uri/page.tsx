@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PoliticaCookieUriPage() {
   return (
-    <LegalPage title="Politica de cookie-uri" updated="17 august 2026">
+    <LegalPage title="Politica de cookie-uri" updated="13 noiembrie 2026">
       <p>
         Această pagină explică ce sunt cookie-urile, ce tipuri folosim pe
         utopiafriedchicken.ro și cum le poți controla.
@@ -36,12 +36,24 @@ export default function PoliticaCookieUriPage() {
           înțelegem cum este folosit Site-ul, astfel încât să îl putem
           îmbunătăți. Sunt folosite doar cu acordul tău.
         </p>
+        <p>
+          <strong>Cookie-uri de marketing</strong> — doar cu acordul tău,
+          folosim Meta Pixel și Meta Conversions API (Meta Platforms Ireland
+          Ltd.) pentru a măsura eficiența reclamelor noastre pe Facebook și
+          Instagram. Acestea setează cookie-urile <code>_fbp</code> și{" "}
+          <code>_fbc</code> și transmit către Meta pagina vizitată, adresa IP,
+          tipul de browser și acțiuni precum deschiderea hărții sau a paginii
+          de comandă Wolt. Alegerea ta este memorată în cookie-ul{" "}
+          <code>utopia_consent</code> (strict necesar).
+        </p>
       </div>
 
       <div>
         <h2>3. Cum îți poți gestiona preferințele</h2>
         <p>
-          Poți accepta, refuza sau șterge cookie-urile direct din setările
+          Îți poți schimba oricând acordul pentru cookie-urile de marketing
+          din linkul „Setări cookie-uri” din subsolul paginii. De asemenea,
+          poți accepta, refuza sau șterge cookie-urile direct din setările
           browser-ului tău. Blocarea anumitor cookie-uri poate afecta
           funcționarea unor părți ale Site-ului.
         </p>

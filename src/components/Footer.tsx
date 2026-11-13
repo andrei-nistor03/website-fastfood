@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Lockup from "./Lockup";
+import CookieSettingsButton from "./CookieSettingsButton";
 import { locations } from "@/data/locations";
 
 export default function Footer() {
@@ -85,6 +86,9 @@ export default function Footer() {
                   >
                     Politica de cookie-uri
                   </a>
+                </li>
+                <li>
+                  <CookieSettingsButton />
                 </li>
               </ul>
             </div>
